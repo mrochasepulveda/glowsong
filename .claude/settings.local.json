@@ -12,7 +12,17 @@
       "Bash(npx create-next-app@latest landing --typescript --tailwind --app --no-src-dir --import-alias \"@/*\" --yes)",
       "mcp__Claude_Preview__preview_start",
       "Bash(curl -s -o /dev/null -w \"%{http_code}\" http://localhost:3002)",
-      "Bash(npm run build)"
+      "Bash(npm run build)",
+      "Bash(npx vercel login)",
+      "Bash(npx vercel --prod --yes)",
+      "Bash(npx vercel env add NEXT_PUBLIC_SUPABASE_URL production)",
+      "Bash(npx vercel env add NEXT_PUBLIC_SUPABASE_ANON_KEY production)",
+      "Bash(npx vercel domains add glowsong.cl)",
+      "Bash(npx vercel domains add www.glowsong.cl)",
+      "Bash(npx vercel project rm glowsong-landing --yes)",
+      "Bash(npx vercel project rm glowsong-landing)",
+      "Bash(dig NS glowsong.cl +short)",
+      "Bash(whois glowsong.cl)"
     ]
   }
 }

@@ -21,7 +21,7 @@ export function PainSection() {
         {/* Section header */}
         <div style={{ textAlign: "center", marginBottom: 64 }}>
           <span className="badge" style={{ marginBottom: 16, display: "inline-flex" }}>
-            El problema
+            El problema oculto
           </span>
           <h2
             className="font-display"
@@ -31,11 +31,11 @@ export function PainSection() {
               marginBottom: 16,
             }}
           >
-            La música mal manejada es la queja{" "}
-            <span className="text-gold-gradient">#1 de tus clientes</span>
+            Tu playlist aleatoria de Spotify te está{" "}
+            <span className="text-gold-gradient">costando ventas cada noche</span>
           </h2>
-          <p style={{ fontSize: "1.0625rem", color: "var(--text-secondary)", maxWidth: 560, margin: "0 auto" }}>
-            Y la mayoría de los dueños lo saben, pero no tienen tiempo ni herramientas para solucionarlo.
+          <p style={{ fontSize: "1.0625rem", color: "var(--text-secondary)", maxWidth: 660, margin: "0 auto", lineHeight: 1.6 }}>
+            El <strong>66.7% de los clientes</strong> cita la música incongruente o el exceso de volumen como su molestia principal (incluso más que un mal servicio). Si la música no engancha, se van temprano. Y cuando se van temprano, <strong>tu ticket promedio cae</strong>.
           </p>
         </div>
 

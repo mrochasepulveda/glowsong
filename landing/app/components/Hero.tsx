@@ -68,9 +68,8 @@ export function Hero() {
                 color: "var(--text-primary)",
               }}
             >
-              La música correcta hace que{" "}
-              <span className="text-gold-gradient">tus clientes se queden más.</span>{" "}
-              La incorrecta, los aleja.
+              No busques solo "música para tu restaurante".{" "}
+              <span className="text-gold-gradient">Busca que tus clientes se queden y gasten más.</span>
             </h1>
 
             {/* Sub */}
@@ -83,11 +82,11 @@ export function Hero() {
                 maxWidth: 460,
               }}
             >
-              Glowsong automatiza la selección musical de tu local en tiempo real
-              — ajustándose al horario y el ambiente —{" "}
-              <strong style={{ color: "var(--text-primary)", fontWeight: 500 }}>
-                para que nunca suene mal.
-              </strong>
+              La mala música ahuyenta mesas. Glowsong es la app inteligente que automatiza el ambiente perfecto, retiene a tus clientes y{" "}
+              <strong style={{ color: "var(--gold)", fontWeight: 500 }}>
+                te genera ingresos adicionales
+              </strong>{" "}
+              sin inversión inicial ni hardware.
             </p>
 
             {/* CTAs */}

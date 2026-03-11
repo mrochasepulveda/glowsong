@@ -1,7 +1,7 @@
 const STATS = [
-  { value: "+23%", label: "tiempo de permanencia promedio con música curada" },
-  { value: "0", label: "instalaciones de hardware requeridas" },
-  { value: "100M+", label: "canciones disponibles en catálogo" },
+  { value: "-4%", label: "caída de ventas al tener música incongruente con el local" },
+  { value: "+24%", label: "más tiempo de permanencia con el mood musical correcto" },
+  { value: "+14.8%", label: "aumento de ticket promedio con música optimizada" },
 ];
 
 export function StatsBar() {

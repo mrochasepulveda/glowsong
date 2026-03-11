@@ -1,7 +1,7 @@
 "use client";
 
 import { useState } from "react";
-import { supabase } from "../../lib/supabase";
+import { getSupabase } from "../../lib/supabase";
 
 const BENEFITS = [
   { icon: "✦", text: "Acceso gratuito durante el período de lanzamiento" },
@@ -23,7 +23,7 @@ export function WaitlistSection() {
     setErrorMsg("");
 
     try {
-      const { error } = await supabase
+      const { error } = await getSupabase()
         .from("waitlist")
         .insert({ email: email.trim().toLowerCase(), local_name: localName.trim() || null });
 
