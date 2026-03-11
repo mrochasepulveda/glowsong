@@ -1,0 +1,13 @@
+{
+  "version": "0.0.1",
+  "configurations": [
+    {
+      "name": "glowsong-landing",
+      "runtimeExecutable": "npm",
+      "runtimeArgs": ["run", "dev"],
+      "port": 3002,
+      "autoPort": true,
+      "cwd": "/Users/maurorocha/Documents/Foqo - glowsong/landing"
+    }
+  ]
+}
