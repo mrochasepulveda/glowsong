@@ -21,9 +21,9 @@ function FeatureIcon({ children }: { children: React.ReactNode }) {
 
 function AlgorithmVisual() {
   const slots = [
-    { label: "Apertura", active: false, color: "rgba(200,169,110,0.3)" },
-    { label: "Tarde", active: false, color: "rgba(200,169,110,0.4)" },
-    { label: "Noche", active: true, color: "var(--gold)" },
+    { label: "Mañana", active: false, color: "rgba(200,169,110,0.3)" },
+    { label: "Mediodía", active: false, color: "rgba(200,169,110,0.4)" },
+    { label: "Tarde", active: true, color: "var(--gold)" },
     { label: "Peak", active: false, color: "rgba(200,169,110,0.3)" },
     { label: "Cierre", active: false, color: "rgba(200,169,110,0.2)" },
   ];
@@ -92,7 +92,7 @@ function AlgorithmVisual() {
       </div>
 
       <p style={{ fontSize: "0.75rem", color: "var(--text-tertiary)", textAlign: "center" }}>
-        Noche temprana · energía y diversión
+        Tarde activa · energía y flow
       </p>
     </div>
   );
@@ -212,7 +212,7 @@ function ControlVisual() {
 function MusicSourceVisual() {
   const devices = [
     { icon: "🔊", name: "Sonos Play:5" },
-    { icon: "💻", name: "MacBook de la barra" },
+    { icon: "💻", name: "MacBook del local" },
     { icon: "📱", name: "iPad del local" },
   ];
 
@@ -295,12 +295,12 @@ function MusicSourceVisual() {
 const FEATURES = [
   {
     badge: "01",
-    title: "Algoritmo que lee la noche",
+    title: "Algoritmo que lee tu espacio",
     items: [
-      "Detecta si es apertura, tarde, noche o peak automáticamente",
-      "Selecciona el mood correcto según el horario y el tipo de local",
+      "Detecta el momento del día y adapta la energía automáticamente",
+      "Selecciona el ambiente correcto según el horario y tu tipo de negocio",
       "Nunca repite canciones en 4 horas",
-      "Se adapta al tipo de local: bar, restaurante, rooftop",
+      "Se adapta a tu tipo de local: café, gym, tienda, salón y más",
     ],
     visual: <AlgorithmVisual />,
   },

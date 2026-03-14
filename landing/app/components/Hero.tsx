@@ -68,8 +68,8 @@ export function Hero() {
                 color: "var(--text-primary)",
               }}
             >
-              No busques solo "música para tu restaurante".{" "}
-              <span className="text-gold-gradient">Busca que tus clientes se queden y gasten más.</span>
+              No busques solo "música para tu local".{" "}
+              <span className="text-gold-gradient">Busca que tu negocio venda más.</span>
             </h1>
 
             {/* Sub */}
@@ -79,14 +79,14 @@ export function Hero() {
                 fontSize: "1.125rem",
                 lineHeight: 1.7,
                 color: "var(--text-secondary)",
-                maxWidth: 460,
+                maxWidth: 480,
               }}
             >
-              La mala música ahuyenta mesas. Glowsong es la app inteligente que automatiza el ambiente perfecto, retiene a tus clientes y{" "}
+              La mala música ahuyenta clientes. Glowsong automatiza el ambiente perfecto de tu local, liberando a tu equipo para lo que importa, reteniendo a tu público y{" "}
               <strong style={{ color: "var(--gold)", fontWeight: 500 }}>
-                te genera ingresos adicionales
+                aumentando tus ventas
               </strong>{" "}
-              sin inversión inicial ni hardware.
+              — sin hardware ni licencias extra.
             </p>
 
             {/* CTAs */}
@@ -159,10 +159,10 @@ export function Hero() {
                   <div style={{ width: 10, height: 10, borderRadius: "50%", background: "#28CA41" }} />
                 </div>
                 <span style={{ flex: 1, textAlign: "center", fontSize: "0.75rem", color: "var(--text-tertiary)" }}>
-                  Buenas noches, El Flow Vegan
+                  Bienvenido, Studio Alma
                 </span>
                 <span style={{ fontSize: "0.7rem", color: "var(--text-tertiary)" }}>
-                  🌙 Noche temprana · energía y diversión
+                  🎵 Tarde activa · energía y flow
                 </span>
               </div>
 
@@ -217,9 +217,9 @@ export function Hero() {
                   >
                     {/* Music note icon */}
                     <svg width="40" height="40" viewBox="0 0 24 24" fill="none">
-                      <path d="M9 18V5l12-2v13" stroke="rgba(200,169,110,0.4)" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"/>
-                      <circle cx="6" cy="18" r="3" stroke="rgba(200,169,110,0.4)" strokeWidth="1.5"/>
-                      <circle cx="18" cy="16" r="3" stroke="rgba(200,169,110,0.4)" strokeWidth="1.5"/>
+                      <path d="M9 18V5l12-2v13" stroke="rgba(200,169,110,0.4)" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" />
+                      <circle cx="6" cy="18" r="3" stroke="rgba(200,169,110,0.4)" strokeWidth="1.5" />
+                      <circle cx="18" cy="16" r="3" stroke="rgba(200,169,110,0.4)" strokeWidth="1.5" />
                     </svg>
                   </div>
 
@@ -253,7 +253,7 @@ export function Hero() {
                   <div style={{ display: "flex", gap: 16, alignItems: "center" }}>
                     <div style={{ width: 36, height: 36, borderRadius: "50%", background: "var(--surface-2)", display: "flex", alignItems: "center", justifyContent: "center" }}>
                       <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="var(--text-secondary)" strokeWidth="2">
-                        <polygon points="5 4 15 12 5 20 5 4"/><line x1="19" y1="5" x2="19" y2="19"/>
+                        <polygon points="5 4 15 12 5 20 5 4" /><line x1="19" y1="5" x2="19" y2="19" />
                       </svg>
                     </div>
                     <div
@@ -269,12 +269,12 @@ export function Hero() {
                       }}
                     >
                       <svg width="18" height="18" viewBox="0 0 24 24" fill="#0A0A1A">
-                        <rect x="6" y="4" width="4" height="16" rx="1"/><rect x="14" y="4" width="4" height="16" rx="1"/>
+                        <rect x="6" y="4" width="4" height="16" rx="1" /><rect x="14" y="4" width="4" height="16" rx="1" />
                       </svg>
                     </div>
                     <div style={{ width: 36, height: 36, borderRadius: "50%", background: "var(--surface-2)", display: "flex", alignItems: "center", justifyContent: "center" }}>
                       <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="var(--text-secondary)" strokeWidth="2">
-                        <polygon points="13 19 22 12 13 5 13 19"/><line x1="2" y1="12" x2="13" y2="12"/>
+                        <polygon points="13 19 22 12 13 5 13 19" /><line x1="2" y1="12" x2="13" y2="12" />
                       </svg>
                     </div>
                   </div>
@@ -364,7 +364,7 @@ export function Hero() {
                 }}
               />
               <span style={{ fontSize: "0.75rem", color: "var(--text-secondary)" }}>
-                Sonando en tu Noche temprana
+                Sonando en tu Tarde activa
               </span>
             </div>
           </div>

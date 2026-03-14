@@ -1,16 +1,14 @@
 const WITHOUT = [
   "Silencio incómodo cuando termina la playlist",
-  "Volumen equivocado a las 3am del viernes",
-  "Tu bartender cambiando canciones en vez de atender clientes",
-  "Canciones repetidas que los regulares ya saben de memoria",
+  "Tu equipo cambiando canciones en vez de atender clientes",
+  "Canciones repetidas que tus clientes frecuentes ya saben de memoria",
   "La misma playlist de siempre porque nadie tiene tiempo de actualizar",
 ];
 
 const WITH = [
-  "Algoritmo que detecta si es apertura, tarde o peak automáticamente",
-  "Mood y energía perfectos para cada momento sin intervención",
+  "Algoritmo que detecta el momento del día y adapta la música automáticamente",
+  "Ambiente y energía perfectos para cada momento sin intervención",
   "Control total con un tap desde donde estés",
-  "Ventana de no-repetición de 4 horas activa siempre",
   "Cola preparada con 10 canciones adelantadas en todo momento",
 ];
 
@@ -31,11 +29,11 @@ export function PainSection() {
               marginBottom: 16,
             }}
           >
-            Tu playlist aleatoria de Spotify te está{" "}
-            <span className="text-gold-gradient">costando ventas cada noche</span>
+            La música equivocada te está{" "}
+            <span className="text-gold-gradient">costando ventas cada día</span>
           </h2>
           <p style={{ fontSize: "1.0625rem", color: "var(--text-secondary)", maxWidth: 660, margin: "0 auto", lineHeight: 1.6 }}>
-            El <strong>66.7% de los clientes</strong> cita la música incongruente o el exceso de volumen como su molestia principal (incluso más que un mal servicio). Si la música no engancha, se van temprano. Y cuando se van temprano, <strong>tu ticket promedio cae</strong>.
+            Más del <strong>70% de los clientes</strong> cita la música incongruente o el exceso de volumen como su molestia principal (incluso más que un mal servicio). Si la música no engancha, se van temprano. Y cuando se van temprano, <strong>tus ventas caen</strong>.
           </p>
         </div>
 
@@ -78,8 +76,8 @@ export function PainSection() {
                 }}
               >
                 <svg width="14" height="14" viewBox="0 0 14 14" fill="none">
-                  <line x1="2" y1="2" x2="12" y2="12" stroke="#F87171" strokeWidth="2" strokeLinecap="round"/>
-                  <line x1="12" y1="2" x2="2" y2="12" stroke="#F87171" strokeWidth="2" strokeLinecap="round"/>
+                  <line x1="2" y1="2" x2="12" y2="12" stroke="#F87171" strokeWidth="2" strokeLinecap="round" />
+                  <line x1="12" y1="2" x2="2" y2="12" stroke="#F87171" strokeWidth="2" strokeLinecap="round" />
                 </svg>
               </div>
               <span style={{ fontWeight: 600, color: "#F87171", fontSize: "0.9375rem" }}>Sin Glowsong</span>
@@ -149,7 +147,7 @@ export function PainSection() {
                 }}
               >
                 <svg width="14" height="14" viewBox="0 0 14 14" fill="none">
-                  <path d="M2 7l3.5 3.5L12 3" stroke="var(--gold)" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
+                  <path d="M2 7l3.5 3.5L12 3" stroke="var(--gold)" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" />
                 </svg>
               </div>
               <span style={{ fontWeight: 600, color: "var(--gold)", fontSize: "0.9375rem" }}>Con Glowsong</span>

@@ -109,8 +109,7 @@ export function WaitlistSection() {
                 maxWidth: 440,
               }}
             >
-              Estamos lanzando Glowsong con un grupo selecto de bares y
-              restaurantes. Los primeros en unirse acceden gratis y ayudan a
+              Estamos lanzando Glowsong con un grupo selecto de locales. Los primeros en unirse acceden gratis y ayudan a
               definir el producto.
             </p>
 
@@ -164,7 +163,7 @@ export function WaitlistSection() {
                 </h3>
                 <p style={{ fontSize: "0.9375rem", color: "var(--text-secondary)", lineHeight: 1.6 }}>
                   Te avisaremos en cuanto estemos listos para tu local. Mientras
-                  tanto, cuéntale a otros dueños de bares.
+                  tanto, cuéntale a otros dueños de negocios — cafés, gyms, tiendas, salones, lo que sea.
                 </p>
               </div>
             ) : (
@@ -191,7 +190,7 @@ export function WaitlistSection() {
                       id="wl-email"
                       type="email"
                       required
-                      placeholder="tu@bar.cl"
+                      placeholder="tu@negocio.cl"
                       value={email}
                       onChange={(e) => setEmail(e.target.value)}
                       style={{
@@ -221,7 +220,7 @@ export function WaitlistSection() {
                     <input
                       id="wl-local"
                       type="text"
-                      placeholder="Bar El Origen"
+                      placeholder="Ej: Studio Alma, Café Raíz..."
                       value={localName}
                       onChange={(e) => setLocalName(e.target.value)}
                       style={{

@@ -43,7 +43,7 @@ export function FinalCTA() {
             margin: "0 auto 20px",
           }}
         >
-          La noche perfecta empieza con{" "}
+          La experiencia perfecta empieza con{" "}
           <span className="text-gold-gradient">la canción correcta.</span>
         </h2>
 
@@ -57,8 +57,8 @@ export function FinalCTA() {
             lineHeight: 1.7,
           }}
         >
-          Únete a la lista de espera hoy y accede gratis cuando lancemos.
-          Cupos limitados para el primer grupo de locales.
+          Únete a la lista de espera hoy y accede a descuentos exclusivos cuando lancemos.
+          Cupos limitados para el primer grupo de negocios.
         </p>
 
         {/* CTA */}
@@ -78,7 +78,7 @@ export function FinalCTA() {
           >
             Reservar mi lugar gratis
             <svg width="18" height="18" viewBox="0 0 18 18" fill="none">
-              <path d="M3.75 9h10.5M9.75 4.5l4.5 4.5-4.5 4.5" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"/>
+              <path d="M3.75 9h10.5M9.75 4.5l4.5 4.5-4.5 4.5" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" />
             </svg>
           </a>
         </div>

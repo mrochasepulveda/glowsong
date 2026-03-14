@@ -38,10 +38,12 @@ export function Navbar() {
         {/* Logo */}
         <a
           href="#"
-          className="font-display text-gold-gradient"
-          style={{ fontSize: "1.4rem", textDecoration: "none", flexShrink: 0 }}
+          style={{ textDecoration: "none", flexShrink: 0, display: "flex", alignItems: "center", gap: 8, color: "var(--gold)" }}
         >
-          Glowsong
+          <img src="/isotipo.svg" alt="" width={28} height={28} style={{ display: "block" }} />
+          <span className="font-display" style={{ fontSize: "1.2rem", color: "var(--text-primary)" }}>
+            glowsong
+          </span>
         </a>
 
         <span style={{ flex: 1 }} />
@@ -85,21 +87,6 @@ export function Navbar() {
 
         {/* CTAs */}
         <div style={{ display: "flex", gap: 8, alignItems: "center", flexShrink: 0 }}>
-          <a
-            href="/login"
-            style={{
-              fontSize: "0.875rem",
-              color: "var(--text-secondary)",
-              textDecoration: "none",
-              padding: "8px 16px",
-              transition: "color 0.2s",
-            }}
-            className="hidden sm:block"
-            onMouseEnter={(e) => (e.currentTarget.style.color = "var(--text-primary)")}
-            onMouseLeave={(e) => (e.currentTarget.style.color = "var(--text-secondary)")}
-          >
-            Iniciar sesión
-          </a>
           <a href="#waitlist" className="btn-primary" style={{ padding: "10px 20px", fontSize: "0.875rem" }}>
             Únete gratis
           </a>

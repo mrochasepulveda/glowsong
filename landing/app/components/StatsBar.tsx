@@ -1,7 +1,7 @@
 const STATS = [
-  { value: "-4%", label: "caída de ventas al tener música incongruente con el local" },
-  { value: "+24%", label: "más tiempo de permanencia con el mood musical correcto" },
-  { value: "+14.8%", label: "aumento de ticket promedio con música optimizada" },
+  { value: "-4%", label: "caída en ventas cuando la música no encaja con tu espacio" },
+  { value: "+24%", label: "más tiempo de permanencia con el ambiente musical correcto" },
+  { value: "+14.8%", label: "aumento en ventas con música estratégicamente optimizada" },
 ];
 
 export function StatsBar() {

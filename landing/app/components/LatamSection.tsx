@@ -39,7 +39,7 @@ export function LatamSection() {
                 lineHeight: 1.2,
               }}
             >
-              Construido para bares y restaurantes de{" "}
+              Construido para locales de{" "}
               <span className="text-gold-gradient">Chile y Latinoamérica</span>
             </h2>
             <p
@@ -50,10 +50,10 @@ export function LatamSection() {
                 marginBottom: 32,
               }}
             >
-              Sabemos cómo suena un bar a las 2am en Santiago. Entendemos el
-              reggaetón del aperitivo y la electrónica del cierre. Glowsong fue
-              construido desde cero para el ambiente latinoamericano — no
-              traducido del inglés.
+              Sabemos cómo suena la hora peak de una cafetería, la clase de las
+              7pm en un gym y la música de fondo que hace que un cliente se
+              quede más tiempo en tu tienda. Glowsong fue construido desde cero
+              para Latinoamérica — no traducido del inglés.
             </p>
 
             {/* Cities */}
@@ -127,7 +127,7 @@ export function LatamSection() {
                 marginBottom: 24,
               }}
             >
-              El 92% de los negocios reportan que la música correcta se
+              El 92% de los locales reportan que la música correcta se
               traduce en mayor tiempo de permanencia y mayor consumo por
               cliente.
             </blockquote>

@@ -11,8 +11,8 @@ const inter = Inter({
 export const metadata: Metadata = {
   title: "Glowsong — La música de tu local que se paga sola",
   description:
-    "Glowsong conecta con Spotify y selecciona automáticamente la canción correcta para cada momento de tu bar o restaurante. Sin hardware, sin instalaciones.",
-  keywords: ["música para bares", "música para restaurantes", "Spotify negocios", "musica ambiental chile", "glowsong"],
+    "Glowsong conecta con Spotify y selecciona automáticamente la canción correcta para cada momento de tu negocio. Sin hardware, sin instalaciones.",
+  keywords: ["música para negocios", "música para locales comerciales", "música para bares", "música para restaurantes", "música para tiendas", "Spotify negocios", "musica ambiental chile", "glowsong"],
   authors: [{ name: "Glowsong" }],
   openGraph: {
     title: "Glowsong — La música de tu local que se paga sola",
@@ -24,7 +24,7 @@ export const metadata: Metadata = {
   twitter: {
     card: "summary_large_image",
     title: "Glowsong",
-    description: "Música inteligente para bares y restaurantes de Chile y LATAM.",
+    description: "Música inteligente para negocios de Chile y LATAM.",
   },
 };
 
@@ -36,10 +36,10 @@ export default function RootLayout({
   return (
     <html lang="es">
       <head>
-        {/* Clash Display — display font via Fontshare CDN */}
+        {/* Cabinet Grotesk — display font via Fontshare CDN */}
         <link rel="preconnect" href="https://api.fontshare.com" />
         <link
-          href="https://api.fontshare.com/v2/css?f[]=clash-display@400,500,600,700&display=swap"
+          href="https://api.fontshare.com/v2/css?f[]=cabinet-grotesk@400,500,700,800&display=swap"
           rel="stylesheet"
         />
       </head>
