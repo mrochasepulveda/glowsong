@@ -169,13 +169,3 @@ body {
 .delay-3 { animation-delay: 0.3s; }
 .delay-4 { animation-delay: 0.4s; }
 
-/* ── Footer link hover (no JS needed) ────────────────────── */
-.footer-link {
-  font-size: 0.875rem;
-  color: var(--text-secondary);
-  text-decoration: none;
-  transition: color 0.2s;
-}
-.footer-link:hover {
-  color: var(--text-primary);
-}
