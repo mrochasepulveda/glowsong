@@ -23,20 +23,39 @@ export function WaitlistSection() {
     setErrorMsg("");
 
     try {
+      const trimmedEmail = email.trim().toLowerCase();
+      const trimmedLocal = localName.trim() || null;
+
       const { error } = await getSupabase()
         .from("waitlist")
-        .insert({ email: email.trim().toLowerCase(), local_name: localName.trim() || null });
+        .insert({ email: trimmedEmail, local_name: trimmedLocal });
 
       if (error) {
         if (error.code === "23505") {
           // duplicate
           setStatus("success");
-        } else {
-          throw error;
+          return;
         }
-      } else {
-        setStatus("success");
+        throw error;
       }
+
+      // Get position in waitlist
+      const { count } = await getSupabase()
+        .from("waitlist")
+        .select("*", { count: "exact", head: true });
+
+      // Send welcome email (fire-and-forget, don't block success)
+      fetch("/api/waitlist-email", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          email: trimmedEmail,
+          localName: trimmedLocal,
+          position: count ?? 1,
+        }),
+      }).catch(() => {});
+
+      setStatus("success");
     } catch {
       setStatus("error");
       setErrorMsg("Algo salió mal. Intenta de nuevo.");
@@ -130,6 +149,7 @@ export function WaitlistSection() {
 
           {/* Right: form */}
           <div
+            className="waitlist-form-card"
             style={{
               background: "var(--surface-1)",
               border: "1px solid var(--border)",
@@ -268,6 +288,15 @@ export function WaitlistSection() {
           .waitlist-grid {
             grid-template-columns: 1fr !important;
             gap: 48px !important;
+          }
+        }
+        @media (max-width: 480px) {
+          .waitlist-form-card {
+            padding: 24px 20px !important;
+            border-radius: 16px !important;
+          }
+          .waitlist-grid {
+            gap: 32px !important;
           }
         }
       `}</style>

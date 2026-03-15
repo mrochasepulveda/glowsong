@@ -1,6 +1,7 @@
 export function Hero() {
   return (
     <section
+      className="hero-section"
       style={{
         position: "relative",
         minHeight: "100vh",
@@ -375,9 +376,17 @@ export function Hero() {
         @media (max-width: 900px) {
           .hero-grid {
             grid-template-columns: 1fr !important;
+            gap: 32px !important;
           }
           .hero-visual {
             display: none;
+          }
+        }
+        @media (max-width: 480px) {
+          .hero-section {
+            padding-top: 88px !important;
+            padding-bottom: 48px !important;
+            min-height: auto !important;
           }
         }
       `}</style>

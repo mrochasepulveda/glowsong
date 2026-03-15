@@ -48,6 +48,7 @@ export function PainSection() {
         >
           {/* Without Glowsong */}
           <div
+            className="pain-card"
             style={{
               background: "var(--surface-1)",
               border: "1px solid rgba(248,113,113,0.2)",
@@ -104,6 +105,7 @@ export function PainSection() {
 
           {/* With Glowsong */}
           <div
+            className="pain-card"
             style={{
               background: "var(--surface-1)",
               border: "1px solid rgba(200,169,110,0.25)",
@@ -178,6 +180,11 @@ export function PainSection() {
         @media (max-width: 768px) {
           .pain-grid {
             grid-template-columns: 1fr !important;
+          }
+        }
+        @media (max-width: 480px) {
+          .pain-card {
+            padding: 20px 18px !important;
           }
         }
       `}</style>

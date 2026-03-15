@@ -106,6 +106,7 @@ export function Footer() {
 
         {/* Bottom */}
         <div
+          className="footer-bottom"
           style={{
             borderTop: "1px solid var(--border)",
             paddingTop: 24,
@@ -129,11 +130,17 @@ export function Footer() {
         @media (max-width: 900px) {
           .footer-grid {
             grid-template-columns: 1fr 1fr !important;
+            gap: 32px !important;
           }
         }
         @media (max-width: 480px) {
           .footer-grid {
             grid-template-columns: 1fr !important;
+            gap: 24px !important;
+          }
+          .footer-bottom {
+            flex-direction: column !important;
+            align-items: flex-start !important;
           }
         }
       `}</style>

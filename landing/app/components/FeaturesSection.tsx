@@ -404,10 +404,16 @@ export function FeaturesSection() {
       </div>
 
       <style>{`
+        @media (max-width: 900px) {
+          .feature-grid {
+            gap: 32px !important;
+          }
+        }
         @media (max-width: 768px) {
           .feature-grid {
             grid-template-columns: 1fr !important;
             direction: ltr !important;
+            gap: 24px !important;
           }
         }
       `}</style>

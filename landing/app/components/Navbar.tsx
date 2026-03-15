@@ -40,7 +40,16 @@ export function Navbar() {
           href="#"
           style={{ textDecoration: "none", flexShrink: 0, display: "flex", alignItems: "center", gap: 8, color: "var(--gold)" }}
         >
-          <img src="/isotipo.svg" alt="" width={28} height={28} style={{ display: "block" }} />
+          <svg width={28} height={28} viewBox="0 0 100 100" fill="none" style={{ display: "block", color: "var(--gold)" }}>
+            <path d="M38 18 Q50 9 62 18" stroke="currentColor" strokeWidth="3.5" strokeLinecap="round"/>
+            <path d="M42 10 Q50 3 58 10" stroke="currentColor" strokeWidth="3" strokeLinecap="round"/>
+            <path d="M30 30 A30 30 0 1 0 70 30" stroke="currentColor" strokeWidth="5.5" strokeLinecap="round"/>
+            <rect x="36" y="50" width="4.5" height="16" rx="2.2" fill="currentColor"/>
+            <rect x="43" y="44" width="4.5" height="28" rx="2.2" fill="currentColor"/>
+            <rect x="50" y="38" width="4.5" height="34" rx="2.2" fill="currentColor"/>
+            <rect x="57" y="44" width="4.5" height="28" rx="2.2" fill="currentColor"/>
+            <rect x="64" y="50" width="4.5" height="16" rx="2.2" fill="currentColor"/>
+          </svg>
           <span className="font-display" style={{ fontSize: "1.2rem", color: "var(--text-primary)" }}>
             glowsong
           </span>
@@ -50,12 +59,7 @@ export function Navbar() {
 
         {/* Nav links — desktop only */}
         <nav
-          style={{
-            display: "flex",
-            gap: 32,
-            alignItems: "center",
-          }}
-          className="hidden md:flex"
+          className="nav-links"
         >
           <a
             href="#como-funciona"
@@ -92,6 +96,18 @@ export function Navbar() {
           </a>
         </div>
       </div>
+      <style>{`
+        .nav-links {
+          display: flex;
+          gap: 32px;
+          align-items: center;
+        }
+        @media (max-width: 768px) {
+          .nav-links {
+            display: none;
+          }
+        }
+      `}</style>
     </header>
   );
 }

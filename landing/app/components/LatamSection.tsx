@@ -91,6 +91,7 @@ export function LatamSection() {
 
           {/* Visual: quote block */}
           <div
+            className="latam-quote"
             style={{
               background: "var(--bg-secondary)",
               border: "1px solid var(--border)",
@@ -158,6 +159,12 @@ export function LatamSection() {
         @media (max-width: 768px) {
           .latam-grid {
             grid-template-columns: 1fr !important;
+            gap: 32px !important;
+          }
+        }
+        @media (max-width: 480px) {
+          .latam-quote {
+            padding: 24px 20px !important;
           }
         }
       `}</style>
