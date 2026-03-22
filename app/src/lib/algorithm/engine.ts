@@ -61,7 +61,7 @@ export interface EnqueueCycleResult {
 // CONSTANTES
 // ─────────────────────────────────────────────────────────────────────────────
 
-const MAX_QUEUE_SIZE = 10;
+const MAX_QUEUE_SIZE = 15;
 const RECOMMENDATIONS_LIMIT = 20;
 
 // ─────────────────────────────────────────────────────────────────────────────
@@ -96,8 +96,23 @@ export async function runEnqueueCycle(opts: {
 
   console.log(`[Engine] ── Ciclo iniciado ── necesita ${needed} tracks (cola: ${currentQueueCount}/${MAX_QUEUE_SIZE})`);
 
-  // — Verificar que no todos los géneros estén bloqueados
-  if (areAllGenresBlocked(musicProfile.allowed_genres, blocks)) {
+  const hasGenres = musicProfile.allowed_genres.length > 0;
+  const hasArtists = (musicProfile.seed_artists?.length ?? 0) > 0;
+
+  // — Verificar que haya algo con qué buscar
+  if (!hasGenres && !hasArtists) {
+    console.warn('[Engine] Sin géneros ni artistas seed');
+    return {
+      enqueuedCount: 0,
+      skippedCount: 0,
+      failedCount: 0,
+      enqueuedTracks: [],
+      warning: 'Configura al menos un género o un artista base en tu perfil.',
+    };
+  }
+
+  // — Verificar que no todos los géneros estén bloqueados (solo si hay géneros)
+  if (hasGenres && areAllGenresBlocked(musicProfile.allowed_genres, blocks)) {
     console.warn('[Engine] Todos los géneros bloqueados');
     return {
       enqueuedCount: 0,
@@ -113,9 +128,10 @@ export async function runEnqueueCycle(opts: {
   const energyParams = getEnergyParamsForSlot(slot, musicProfile.energy_level);
   const mood = getMoodForSlot(localType, slot);
 
-  // — Seeds de Spotify (max 5, rotación aleatoria si hay más géneros)
-  const seedGenres = genresToSpotifySeeds(musicProfile.allowed_genres);
-  console.log(`[Engine] Slot: ${slot} | Mood: ${mood.keywords.join(', ')} | Seeds: ${seedGenres.join(', ')}`);
+  // — Seeds de Spotify: géneros + artistas
+  const seedGenres = hasGenres ? genresToSpotifySeeds(musicProfile.allowed_genres) : [];
+  const seedArtistNames = musicProfile.seed_artists?.map(a => a.name) ?? [];
+  console.log(`[Engine] Slot: ${slot} | Mood: ${mood.keywords.join(', ')} | Genre seeds: ${seedGenres.join(', ')} | Artist seeds: ${seedArtistNames.join(', ')}`);
 
   // — Obtener recomendaciones (con fallback EC-F2-01)
   const recsStart = Date.now();
@@ -124,7 +140,8 @@ export async function runEnqueueCycle(opts: {
     energyParams,
     musicProfile.allowed_genres,
     localId,
-    mood.keywords
+    mood.keywords,
+    seedArtistNames
   );
   console.log(`[Engine] Recomendaciones: ${candidates.length} candidatos en ${Date.now() - recsStart}ms`);
 
@@ -210,42 +227,60 @@ export async function runEnqueueCycle(opts: {
 
 /**
  * Obtiene recomendaciones con estrategia de fallback (EC-F2-01):
- * 1. Seeds normales del MusicProfile
- * 2. Solo el primer género + energía relajada
- * 3. Géneros relacionados
+ * 1. Seeds normales del MusicProfile (géneros + mood)
+ * 2. Seeds por artista (si hay seed_artists)
+ * 3. Solo el primer género + energía relajada
+ * 4. Géneros relacionados
  */
 async function fetchWithFallback(
   seedGenres: string[],
   energyParams: ReturnType<typeof getEnergyParamsForSlot>,
   allowedGenres: Genre[],
   localId: string,
-  moodKeywords: string[]
+  moodKeywords: string[],
+  seedArtistNames: string[] = []
 ): Promise<SpotifyRecommendation[]> {
-  // Intento 1: seeds normales + mood keywords
-  let results = await getRecommendations(seedGenres, energyParams, RECOMMENDATIONS_LIMIT, localId, moodKeywords);
-  if (results.length > 0) return results;
-
-  // Intento 2: solo primer género, ±0.2 de energía, mismo mood
-  const relaxedParams = {
-    ...energyParams,
-    minEnergy: Math.max(0, energyParams.minEnergy - 0.2),
-    maxEnergy: Math.min(1, energyParams.maxEnergy + 0.2),
-  };
-  const fallbackSeeds = genresToSpotifySeeds([allowedGenres[0]], 2);
-  results = await getRecommendations(fallbackSeeds, relaxedParams, RECOMMENDATIONS_LIMIT, localId, moodKeywords);
-  if (results.length > 0) return results;
-
-  // Intento 3: géneros relacionados (sin mood para ampliar resultados)
-  const relatedGenres = allowedGenres
-    .flatMap((g) => RELATED_GENRES[g] ?? [])
-    .slice(0, 5) as Genre[];
-
-  if (relatedGenres.length > 0) {
-    const relatedSeeds = genresToSpotifySeeds(relatedGenres);
-    results = await getRecommendations(relatedSeeds, relaxedParams, RECOMMENDATIONS_LIMIT, localId);
+  // Intento 1: seeds por género + mood keywords (solo si hay géneros)
+  if (seedGenres.length > 0) {
+    let results = await getRecommendations(seedGenres, energyParams, RECOMMENDATIONS_LIMIT, localId, moodKeywords);
+    if (results.length > 0) return results;
   }
 
-  return results;
+  // Intento 2: buscar por artistas seed (si hay)
+  if (seedArtistNames.length > 0) {
+    const artistResults = await getRecommendations(
+      seedArtistNames.map(name => `artist:${name}`),
+      energyParams,
+      RECOMMENDATIONS_LIMIT,
+      localId
+    );
+    if (artistResults.length > 0) return artistResults;
+  }
+
+  // Intento 3: solo primer género, ±0.2 de energía, mismo mood
+  if (allowedGenres.length > 0) {
+    const relaxedParams = {
+      ...energyParams,
+      minEnergy: Math.max(0, energyParams.minEnergy - 0.2),
+      maxEnergy: Math.min(1, energyParams.maxEnergy + 0.2),
+    };
+    const fallbackSeeds = genresToSpotifySeeds([allowedGenres[0]], 2);
+    let results = await getRecommendations(fallbackSeeds, relaxedParams, RECOMMENDATIONS_LIMIT, localId, moodKeywords);
+    if (results.length > 0) return results;
+
+    // Intento 4: géneros relacionados (sin mood para ampliar resultados)
+    const relatedGenres = allowedGenres
+      .flatMap((g) => RELATED_GENRES[g] ?? [])
+      .slice(0, 5) as Genre[];
+
+    if (relatedGenres.length > 0) {
+      const relatedSeeds = genresToSpotifySeeds(relatedGenres);
+      results = await getRecommendations(relatedSeeds, relaxedParams, RECOMMENDATIONS_LIMIT, localId);
+      if (results.length > 0) return results;
+    }
+  }
+
+  return [];
 }
 
 /**

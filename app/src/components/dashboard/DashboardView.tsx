@@ -3,11 +3,10 @@
 import { useState, useCallback, useEffect, useMemo } from 'react';
 import Link from 'next/link';
 import { useQuery } from '@tanstack/react-query';
-import type { DashboardState, SessionStatus, MusicProfile, Block, Genre, TrackInfo } from '@/types';
-import { useWebPlayback } from '@/hooks/useWebPlayback';
-import { useAlgorithm } from '@/hooks/useAlgorithm';
-import { useLocal, type MusicProfileRow } from '@/hooks/useLocal';
-import { useBlocks, type BlockRow } from '@/hooks/useBlocks';
+import type { DashboardState, SessionStatus, MusicProfile, Genre, TrackInfo } from '@/types';
+import { usePlayer } from '@/contexts/PlayerContext';
+import { useLocal } from '@/hooks/useLocal';
+import { useBlocks } from '@/hooks/useBlocks';
 import { useAuth } from '@/hooks/useAuth';
 import { getCurrentTimeSlot, getEnergyParamsForSlot } from '@/lib/algorithm/timeSlots';
 import { getMoodForSlot } from '@/lib/algorithm/moodPresets';
@@ -65,37 +64,6 @@ interface ToastState {
   type: 'success' | 'error' | 'info';
 }
 
-/** Mapea MusicProfileRow (Supabase) → MusicProfile (algoritmo) */
-function toMusicProfile(row: MusicProfileRow): MusicProfile {
-  return {
-    id: row.id,
-    local_id: row.local_id,
-    name: 'Perfil Local',
-    allowed_genres: row.genres as Genre[],
-    seed_artists: row.seed_artists || [],
-    energy_level: row.energy_level,
-    is_default: true,
-    created_at: row.created_at,
-  };
-}
-
-/** Mapea BlockRow (Supabase) → Block (algoritmo) */
-function toBlock(row: BlockRow): Block {
-  return {
-    id: row.id,
-    local_id: row.local_id,
-    block_type: row.type,
-    value: row.value,
-    display_name: row.display_name,
-    scope: row.scope,
-    created_at: row.created_at,
-  };
-}
-
-const DEFAULT_MUSIC_PROFILE: MusicProfile = {
-  id: '', local_id: '', name: '', allowed_genres: [], energy_level: 'auto', is_default: true, created_at: '',
-};
-
 export function DashboardView() {
   const [isSkipLoading, setIsSkipLoading] = useState(false);
   const [isPauseLoading, setIsPauseLoading] = useState(false);
@@ -104,18 +72,38 @@ export function DashboardView() {
 
   useEffect(() => { setMounted(true); }, []);
 
-  // Datos reales de Supabase
+  // Datos de Supabase
   const { local, musicProfile: musicProfileRow, loading: isLocalLoading } = useLocal();
   const { blocks: blockRows } = useBlocks(local?.id ?? null);
   const { signOut } = useAuth();
   const localName = local?.name ?? 'Mi Local';
 
-  // Convertir datos Supabase → tipos del algoritmo
-  const musicProfile = useMemo(
-    () => musicProfileRow ? toMusicProfile(musicProfileRow) : null,
+  // Player del contexto persistente (layout)
+  const {
+    sdkState,
+    sdkError,
+    pause: sdkPause,
+    resume: sdkResume,
+    skipNext: sdkSkipNext,
+    playTrackUri,
+    algorithmState,
+    localQueue,
+  } = usePlayer();
+
+  // Convertir musicProfile para bootstrap
+  const musicProfile: MusicProfile | null = useMemo(
+    () => musicProfileRow ? {
+      id: musicProfileRow.id,
+      local_id: musicProfileRow.local_id,
+      name: 'Perfil Local',
+      allowed_genres: musicProfileRow.genres as Genre[],
+      seed_artists: musicProfileRow.seed_artists || [],
+      energy_level: musicProfileRow.energy_level,
+      is_default: true,
+      created_at: musicProfileRow.created_at,
+    } : null,
     [musicProfileRow]
   );
-  const blocks = useMemo(() => blockRows.map(toBlock), [blockRows]);
 
   // Redirigir al onboarding si el local existe pero no está activo
   useEffect(() => {
@@ -129,40 +117,6 @@ export function DashboardView() {
     setToasts((prev) => [...prev, { id, message, type }]);
     setTimeout(() => setToasts((prev) => prev.filter((t) => t.id !== id)), 4000);
   }, []);
-
-  // Web Playback SDK — el browser ES el player
-  const {
-    state: sdkState,
-    error: sdkError,
-    pause: sdkPause,
-    resume: sdkResume,
-    skipNext: sdkSkipNext,
-    playTrackUri,
-  } = useWebPlayback({
-    localId: local?.id ?? null,
-    enabled: !!local && local.status === 'active',
-    onTrackChange: (track) => {
-      console.log('[Dashboard] Track changed:', track.name);
-    },
-    onError: (type, message) => {
-      console.error(`[Dashboard] SDK error (${type}):`, message);
-      if (type === 'authentication_error') {
-        showToast('Error de autenticación con Spotify. Reconecta tu cuenta.', 'error');
-      }
-    },
-  });
-
-  // Algoritmo conectado al SDK
-  const { algorithmState, localQueue } = useAlgorithm({
-    musicProfile: musicProfile ?? DEFAULT_MUSIC_PROFILE,
-    blocks,
-    localId: local?.id ?? '',
-    localType: local?.type ?? 'otro',
-    deviceId: sdkState.deviceId,
-    currentTrack: sdkState.currentTrack,
-    queueCount: sdkState.nextTracks.length,
-    enabled: sdkState.isReady && sdkState.isPlaying && !!musicProfile,
-  });
 
   // Fallback: polling cada 60s para datos complementarios
   useQuery<DashboardState>({
@@ -332,68 +286,22 @@ export function DashboardView() {
 
   if (!mounted || isLocalLoading) {
     return (
-      <div className={styles.shell}>
-        <aside className={styles.sidebar}>
-          <GlowsongIsotipo size={36} className={styles.sidebarLogo} />
-          <span className={styles.sidebarSpacer} />
-        </aside>
-        <main className={styles.main}>
-          <div className={styles.topBar}>
-            <div className={styles.topBarLeft}>
-              <div className={`skeleton ${styles.skeletonGreeting}`} />
-              <div className={`skeleton ${styles.skeletonMood}`} />
-            </div>
+      <main className={styles.main}>
+        <div className={styles.topBar}>
+          <div className={styles.topBarLeft}>
+            <div className={`skeleton ${styles.skeletonGreeting}`} />
+            <div className={`skeleton ${styles.skeletonMood}`} />
           </div>
-          <div className={styles.heroSection}>
-            <NowPlayingSkeleton />
-          </div>
-        </main>
-        <aside className={styles.rightPanel}>
-          <QueueList queue={[]} onPlayTrack={() => {}} isLoading={true} />
-        </aside>
-      </div>
+        </div>
+        <div className={styles.heroSection}>
+          <NowPlayingSkeleton />
+        </div>
+      </main>
     );
   }
 
   return (
-    <div className={styles.shell}>
-      {/* ════════════════════════════════
-          SIDEBAR
-      ════════════════════════════════ */}
-      <aside className={styles.sidebar}>
-        <GlowsongIsotipo size={36} className={styles.sidebarLogo} />
-
-        <span className={styles.sidebarSpacer} />
-
-        <div className={styles.sidebarStatus}>
-          <span className={`${styles.sidebarDot} ${status.dotCss}`} />
-          <span className={styles.sidebarStatusLabel}>{status.label}</span>
-        </div>
-
-        <Link href="/dashboard/config" className={styles.sidebarIconBtn} aria-label="Configuración">
-          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round">
-            <circle cx="12" cy="12" r="3" />
-            <path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1-2.83 2.83l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-4 0v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83-2.83l.06-.06A1.65 1.65 0 0 0 4.68 15a1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1 0-4h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 2.83-2.83l.06.06A1.65 1.65 0 0 0 9 4.68a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 4 0v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 2.83l-.06.06A1.65 1.65 0 0 0 19.4 9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 0 4h-.09a1.65 1.65 0 0 0-1.51 1z" />
-          </svg>
-        </Link>
-
-        <button
-          onClick={signOut}
-          className={styles.sidebarIconBtn}
-          aria-label="Cerrar sesión"
-          title="Cerrar sesión"
-        >
-          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round">
-            <path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4" />
-            <polyline points="16 17 21 12 16 7" />
-            <line x1="21" y1="12" x2="9" y2="12" />
-          </svg>
-        </button>
-      </aside>
-
-      {/* ════════════════════════════════
-          MAIN (top bar + hero)
-      ════════════════════════════════ */}
+    <>
       <main className={styles.main}>
         <div className={styles.topBar}>
           <div className={styles.topBarLeft}>
@@ -450,19 +358,6 @@ export function DashboardView() {
         )}
       </main>
 
-      {/* ════════════════════════════════
-          RIGHT PANEL (queue + engine status)
-      ════════════════════════════════ */}
-      <aside className={styles.rightPanel}>
-        <QueueList queue={queueItems} onPlayTrack={handlePlayQueueTrack} isLoading={sdkState.isReady && queueItems.length === 0 && algorithmState.status === 'enqueueing'} />
-        <div className={styles.rightPanelFooter}>
-          <AlgorithmPanel
-            state={algorithmState}
-            moodDescription={mood.description}
-          />
-        </div>
-      </aside>
-
       {/* ── Toast stack ── */}
       <div className={styles.toastContainer} role="alert" aria-live="polite">
         {toasts.map((toast) => (
@@ -472,6 +367,6 @@ export function DashboardView() {
           </div>
         ))}
       </div>
-    </div>
+    </>
   );
 }

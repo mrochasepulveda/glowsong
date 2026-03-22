@@ -21,10 +21,11 @@ import {
   type SpotifyRecommendation,
 } from '@/lib/algorithm/spotifyClient';
 import { getCurrentTimeSlot } from '@/lib/algorithm/timeSlots';
-import type { MusicProfile, Block, SessionEvent } from '@/types';
+import { resolveProfileForNow } from '@/lib/algorithm/weeklyResolver';
+import type { MusicProfile, Block, SessionEvent, WeeklyDayStatus, WeeklySlotOverride } from '@/types';
 import type { WebPlaybackTrack } from './useWebPlayback';
 
-const MIN_QUEUE_THRESHOLD = 5;
+const MIN_QUEUE_THRESHOLD = 10;
 const SAFETY_CHECK_INTERVAL_MS = 60_000; // 60 segundos (respaldo)
 
 export interface QueuedTrack {
@@ -51,6 +52,8 @@ export interface UseAlgorithmOptions {
   currentTrack: WebPlaybackTrack | null;
   queueCount: number;
   enabled: boolean;
+  dayStatuses: WeeklyDayStatus[];
+  slotOverrides: WeeklySlotOverride[];
 }
 
 export function useAlgorithm({
@@ -62,6 +65,8 @@ export function useAlgorithm({
   currentTrack,
   queueCount,
   enabled,
+  dayStatuses,
+  slotOverrides,
 }: UseAlgorithmOptions): UseAlgorithmReturn {
   const [algorithmState, setAlgorithmState] = useState<AlgorithmState>({
     status: 'idle',
@@ -86,10 +91,10 @@ export function useAlgorithm({
   useEffect(() => { localQueueLenRef.current = localQueue.length; }, [localQueue]);
 
   // Ref para las dependencias del ciclo (evita recrear callbacks)
-  const depsRef = useRef({ musicProfile, blocks, localId, localType, deviceId });
+  const depsRef = useRef({ musicProfile, blocks, localId, localType, deviceId, dayStatuses, slotOverrides });
   useEffect(() => {
-    depsRef.current = { musicProfile, blocks, localId, localType, deviceId };
-  }, [musicProfile, blocks, localId, localType, deviceId]);
+    depsRef.current = { musicProfile, blocks, localId, localType, deviceId, dayStatuses, slotOverrides };
+  }, [musicProfile, blocks, localId, localType, deviceId, dayStatuses, slotOverrides]);
 
   /**
    * Ejecuta un ciclo de encolado completo.
@@ -98,11 +103,30 @@ export function useAlgorithm({
     if (isRunningRef.current) return;
     isRunningRef.current = true;
 
-    const { musicProfile: mp, blocks: bl, localId: lid, localType: lt, deviceId: did } = depsRef.current;
+    const { musicProfile: mp, blocks: bl, localId: lid, localType: lt, deviceId: did, dayStatuses: ds, slotOverrides: so } = depsRef.current;
     const cycleStart = Date.now();
     console.log(`[useAlgorithm] Ciclo iniciado — cola actual: ${currentQueueCount}, localQueue: ${localQueueLenRef.current}`);
 
     try {
+      // Resolver perfil semanal antes de encolar
+      const resolved = resolveProfileForNow(mp, ds, so);
+      if (resolved.isClosed) {
+        console.log('[useAlgorithm] Día/franja cerrada según planificador semanal — skip');
+        setAlgorithmState((prev) => ({
+          ...prev,
+          status: 'idle',
+          currentSlot: getCurrentTimeSlot(),
+          warningMessage: 'Hoy está marcado como cerrado en el planificador semanal.',
+        }));
+        isRunningRef.current = false;
+        return;
+      }
+
+      const resolvedProfile = resolved.profile;
+      if (resolved.isCustom) {
+        console.log(`[useAlgorithm] Usando perfil personalizado del planificador semanal`);
+      }
+
       setAlgorithmState((prev) => ({
         ...prev,
         status: 'enqueueing',
@@ -126,7 +150,7 @@ export function useAlgorithm({
       }));
 
       const result = await runEnqueueCycle({
-        musicProfile: mp,
+        musicProfile: resolvedProfile,
         blocks: bl,
         recentEvents,
         currentQueueCount,

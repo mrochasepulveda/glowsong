@@ -3,9 +3,11 @@
 import { useState, useEffect, useCallback, useMemo } from 'react';
 import Link from 'next/link';
 import { useLocal } from '@/hooks/useLocal';
-import { GENRES_CATALOG, GENRE_DISPLAY_NAMES, type Genre, type LocalType, type SeedArtist } from '@/types';
+import { GENRES_CATALOG, GENRE_DISPLAY_NAMES, type Genre, type LocalType, type SeedArtist, type WeeklyDayStatus, type WeeklySlotOverride } from '@/types';
 import { GlowsongIsotipo } from '@/components/shared/GlowsongIsotipo';
 import { ArtistSearch } from './ArtistSearch';
+import { WeeklyPlanner } from './WeeklyPlanner';
+import { generateSmartDefaults } from '@/lib/algorithm/weeklyResolver';
 import styles from './SettingsView.module.css';
 
 const LOCAL_TYPES: { value: LocalType; label: string; emoji: string }[] = [
@@ -22,6 +24,8 @@ interface FormData {
   localName: string;
   localType: LocalType | '';
   neighborhood: string;
+  openTime: string;
+  closeTime: string;
   genres: Genre[];
   seedArtists: SeedArtist[];
 }
@@ -36,13 +40,15 @@ export function SettingsView() {
   const { local, musicProfile, loading, updateLocal, updateMusicProfile } = useLocal();
 
   const [formData, setFormData] = useState<FormData>({
-    localName: '', localType: '', neighborhood: '', genres: [], seedArtists: []
+    localName: '', localType: '', neighborhood: '', openTime: '12:00', closeTime: '02:00', genres: [], seedArtists: []
   });
   const [initialData, setInitialData] = useState<FormData | null>(null);
   const [errors, setErrors] = useState<Record<string, string>>({});
   const [isSaving, setIsSaving] = useState(false);
   const [toasts, setToasts] = useState<ToastState[]>([]);
   const [mounted, setMounted] = useState(false);
+  const [dayStatuses, setDayStatuses] = useState<WeeklyDayStatus[]>([]);
+  const [slotOverrides, setSlotOverrides] = useState<WeeklySlotOverride[]>([]);
 
   useEffect(() => { setMounted(true); }, []);
 
@@ -53,11 +59,27 @@ export function SettingsView() {
         localName: local.name,
         localType: local.type,
         neighborhood: local.address || '',
+        openTime: local.open_time || '12:00',
+        closeTime: local.close_time || '02:00',
         genres: (musicProfile.genres || []) as Genre[],
         seedArtists: musicProfile.seed_artists || [],
       };
       setFormData(data);
       setInitialData(data);
+
+      // Auto-generate smart weekly plan based on local type, genres & hours
+      const genres = (musicProfile.genres || []) as Genre[];
+      if (genres.length > 0 && local.type) {
+        const { dayStatuses: ds, slotOverrides: so } = generateSmartDefaults(
+          local.id,
+          local.type,
+          genres,
+          local.open_time || '12:00',
+          local.close_time || '02:00'
+        );
+        setDayStatuses(ds);
+        setSlotOverrides(so);
+      }
     }
   }, [local, musicProfile]);
 
@@ -68,6 +90,8 @@ export function SettingsView() {
       formData.localName !== initialData.localName ||
       formData.localType !== initialData.localType ||
       formData.neighborhood !== initialData.neighborhood ||
+      formData.openTime !== initialData.openTime ||
+      formData.closeTime !== initialData.closeTime ||
       JSON.stringify([...formData.genres].sort()) !== JSON.stringify([...initialData.genres].sort()) ||
       JSON.stringify(formData.seedArtists) !== JSON.stringify(initialData.seedArtists)
     );
@@ -104,19 +128,40 @@ export function SettingsView() {
 
     setIsSaving(true);
     try {
-      await updateLocal({
-        name: formData.localName,
-        type: formData.localType as LocalType,
-        address: formData.neighborhood,
-      });
-      await updateMusicProfile({
-        genres: formData.genres,
-        seed_artists: formData.seedArtists,
-      });
+      // 1. Update local info
+      try {
+        await updateLocal({
+          name: formData.localName,
+          type: formData.localType as LocalType,
+          address: formData.neighborhood,
+          open_time: formData.openTime,
+          close_time: formData.closeTime,
+        });
+      } catch (localErr: any) {
+        console.error('[Settings] Error updating local:', localErr);
+        showToast(`Error en datos del local: ${localErr?.message || localErr}`, 'error');
+        setIsSaving(false);
+        return;
+      }
+
+      // 2. Update music profile
+      try {
+        await updateMusicProfile({
+          genres: formData.genres,
+          seed_artists: formData.seedArtists,
+        });
+      } catch (profileErr: any) {
+        console.error('[Settings] Error updating music profile:', profileErr);
+        showToast(`Error en perfil musical: ${profileErr?.message || profileErr}`, 'error');
+        setIsSaving(false);
+        return;
+      }
+
       setInitialData({ ...formData });
       showToast('Cambios guardados exitosamente', 'success');
-    } catch {
-      showToast('Error al guardar los cambios', 'error');
+    } catch (err: any) {
+      console.error('[Settings] Unexpected save error:', err);
+      showToast(`Error al guardar: ${err?.message || 'Error desconocido'}`, 'error');
     } finally {
       setIsSaving(false);
     }
@@ -135,20 +180,14 @@ export function SettingsView() {
   // Loading state
   if (!mounted || loading) {
     return (
-      <div className={styles.shell}>
-        <aside className={styles.sidebar}>
-          <GlowsongIsotipo size={36} className={styles.sidebarLogo} />
-          <span className={styles.sidebarSpacer} />
-        </aside>
-        <main className={styles.main}>
-          <div className={styles.formArea}>
-            <div className={styles.formContainer}>
-               <div className={`skeleton ${styles.skeletonTitle}`} />
-               <div className={`skeleton ${styles.skeletonSubtitle}`} />
-            </div>
+      <main className={styles.main}>
+        <div className={styles.formArea}>
+          <div className={styles.formContainer}>
+             <div className={`skeleton ${styles.skeletonTitle}`} />
+             <div className={`skeleton ${styles.skeletonSubtitle}`} />
           </div>
-        </main>
-      </div>
+        </div>
+      </main>
     );
   }
 
@@ -159,20 +198,9 @@ export function SettingsView() {
   }
 
   return (
-    <div className={styles.shell}>
+    <>
       <div className={styles.ambientGlowPrimary} />
       <div className={styles.ambientGlowSecondary} />
-
-      {/* ── Sidebar ── */}
-      <aside className={styles.sidebar}>
-        <GlowsongIsotipo size={36} className={styles.sidebarLogo} />
-        <span className={styles.sidebarSpacer} />
-        <Link href="/dashboard" className={styles.sidebarIconBtn} aria-label="Volver al dashboard" title="Dashboard">
-          <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-            <polyline points="15 18 9 12 15 6" />
-          </svg>
-        </Link>
-      </aside>
 
       {/* ── Main ── */}
       <main className={styles.main}>
@@ -250,6 +278,51 @@ export function SettingsView() {
                       {errors.neighborhood && <span className={styles.errorMsg}>{errors.neighborhood}</span>}
                     </div>
                   </div>
+
+                  <div className={styles.fieldGrid}>
+                    <div className={styles.fieldGroup}>
+                      <label className={styles.label} htmlFor="openTime">Hora de apertura</label>
+                      <input
+                        id="openTime"
+                        type="time"
+                        className={styles.input}
+                        value={formData.openTime}
+                        onChange={(e) => {
+                          const newOpenTime = e.target.value;
+                          setFormData((prev) => ({ ...prev, openTime: newOpenTime }));
+                          // Regenerar plan semanal con nuevos horarios
+                          if (local && formData.genres.length > 0 && formData.localType) {
+                            const { dayStatuses: ds, slotOverrides: so } = generateSmartDefaults(
+                              local.id, formData.localType as LocalType, formData.genres, newOpenTime, formData.closeTime
+                            );
+                            setDayStatuses(ds);
+                            setSlotOverrides(so);
+                          }
+                        }}
+                      />
+                    </div>
+                    <div className={styles.fieldGroup}>
+                      <label className={styles.label} htmlFor="closeTime">Hora de cierre</label>
+                      <input
+                        id="closeTime"
+                        type="time"
+                        className={styles.input}
+                        value={formData.closeTime}
+                        onChange={(e) => {
+                          const newCloseTime = e.target.value;
+                          setFormData((prev) => ({ ...prev, closeTime: newCloseTime }));
+                          // Regenerar plan semanal con nuevos horarios
+                          if (local && formData.genres.length > 0 && formData.localType) {
+                            const { dayStatuses: ds, slotOverrides: so } = generateSmartDefaults(
+                              local.id, formData.localType as LocalType, formData.genres, formData.openTime, newCloseTime
+                            );
+                            setDayStatuses(ds);
+                            setSlotOverrides(so);
+                          }
+                        }}
+                      />
+                    </div>
+                  </div>
                 </div>
               </div>
 
@@ -275,6 +348,14 @@ export function SettingsView() {
                         onClick={() => {
                           setFormData((prev) => ({ ...prev, localType: t.value }));
                           setErrors((prev) => ({ ...prev, localType: '' }));
+                          // Regenerar plan semanal con nuevo tipo de local
+                          if (local && formData.genres.length > 0) {
+                            const { dayStatuses: ds, slotOverrides: so } = generateSmartDefaults(
+                              local.id, t.value, formData.genres, formData.openTime, formData.closeTime
+                            );
+                            setDayStatuses(ds);
+                            setSlotOverrides(so);
+                          }
                         }}
                       >
                         <span className={styles.typeEmoji}>{t.emoji}</span>
@@ -346,6 +427,21 @@ export function SettingsView() {
                 </div>
               </div>
 
+              {/* ── Card 4: Planificador Semanal ── */}
+              <WeeklyPlanner
+                dayStatuses={dayStatuses}
+                slotOverrides={slotOverrides}
+                defaultGenres={formData.genres}
+                localId={local.id}
+                localType={local.type}
+                openTime={formData.openTime}
+                closeTime={formData.closeTime}
+                onChange={(newDayStatuses, newSlotOverrides) => {
+                  setDayStatuses(newDayStatuses);
+                  setSlotOverrides(newSlotOverrides);
+                }}
+              />
+
               {/* Spacer so the floating bar doesn't overlap content */}
               <div className={styles.bottomSpacer} />
 
@@ -378,6 +474,6 @@ export function SettingsView() {
           </div>
         ))}
       </div>
-    </div>
+    </>
   );
 }

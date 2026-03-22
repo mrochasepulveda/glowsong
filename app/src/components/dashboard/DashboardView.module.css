@@ -6,7 +6,7 @@
 /* ── Root Shell ─────────────────────────────────────────────── */
 .shell {
   display: flex;
-  height: 100dvh;
+  height: 100%;
   overflow: hidden;
   background: var(--color-bg-primary);
 }
@@ -349,8 +349,21 @@
 
   .main { overflow: visible; }
 
+  .topBar {
+    height: 48px;
+    padding: 0 var(--space-5);
+  }
+
+  .topBarGreeting {
+    font-size: var(--text-base);
+  }
+
+  .topBarMoodBadge {
+    display: none; /* simple is better on mobile */
+  }
+
   .heroSection {
-    padding: var(--space-6) var(--space-4);
+    padding: var(--space-4) var(--space-5);
   }
 
   .rightPanel {

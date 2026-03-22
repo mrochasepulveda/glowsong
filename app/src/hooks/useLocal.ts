@@ -2,7 +2,7 @@
 
 import { useEffect, useState, useCallback } from 'react';
 import { createClient } from '@/lib/supabase/client';
-import type { SeedArtist } from '@/types';
+import type { SeedArtist, WeeklyDayStatus, WeeklySlotOverride } from '@/types';
 
 // Tipos locales para evitar problemas con inferencia de Supabase generics
 export type LocalRow = {
@@ -15,6 +15,8 @@ export type LocalRow = {
   capacity: number | null;
   status: 'pending_spotify' | 'configured' | 'active' | 'inactive';
   spotify_device_id: string | null;
+  open_time: string;   // "HH:mm" e.g. "13:00"
+  close_time: string;  // "HH:mm" e.g. "02:00"
   created_at: string;
   updated_at: string;
 };
@@ -40,19 +42,25 @@ export type MusicProfileUpdate = Pick<MusicProfileRow, 'genres' | 'seed_artists'
 interface UseLocalReturn {
   local: LocalRow | null;
   musicProfile: MusicProfileRow | null;
+  dayStatuses: WeeklyDayStatus[];
+  slotOverrides: WeeklySlotOverride[];
   loading: boolean;
   error: string | null;
   createLocal: (data: Omit<LocalInsert, 'owner_id'>) => Promise<LocalRow | null>;
   updateLocal: (data: Partial<LocalInsert>) => Promise<void>;
   updateMusicProfile: (data: Partial<MusicProfileUpdate>) => Promise<void>;
+  updateWeeklySchedule: (dayStatuses: WeeklyDayStatus[], slotOverrides: WeeklySlotOverride[]) => Promise<void>;
   refetch: () => void;
 }
 
 export function useLocal(): UseLocalReturn {
   const [local, setLocal] = useState<LocalRow | null>(null);
   const [musicProfile, setMusicProfile] = useState<MusicProfileRow | null>(null);
+  const [dayStatuses, setDayStatuses] = useState<WeeklyDayStatus[]>([]);
+  const [slotOverrides, setSlotOverrides] = useState<WeeklySlotOverride[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
+  const [fetchCount, setFetchCount] = useState(0);
 
   const fetchLocal = useCallback(async () => {
     setLoading(true);
@@ -84,6 +92,25 @@ export function useLocal(): UseLocalReturn {
 
         if (profileErr) throw profileErr;
         setMusicProfile(profileData as MusicProfileRow | null);
+
+        // Fetch weekly planner data
+        const [dayStatusRes, slotOverrideRes] = await Promise.all([
+          client
+            .from('weekly_day_status')
+            .select('*')
+            .eq('local_id', localData.id),
+          client
+            .from('weekly_slot_overrides')
+            .select('*')
+            .eq('local_id', localData.id),
+        ]);
+
+        if (!dayStatusRes.error) {
+          setDayStatuses((dayStatusRes.data ?? []) as WeeklyDayStatus[]);
+        }
+        if (!slotOverrideRes.error) {
+          setSlotOverrides((slotOverrideRes.data ?? []) as WeeklySlotOverride[]);
+        }
       }
     } catch (err: unknown) {
       setError(err instanceof Error ? err.message : 'Error cargando datos');
@@ -92,7 +119,9 @@ export function useLocal(): UseLocalReturn {
     }
   }, []);
 
-  useEffect(() => { fetchLocal(); }, [fetchLocal]);
+  useEffect(() => { fetchLocal(); }, [fetchLocal, fetchCount]);
+
+  const refetch = useCallback(() => setFetchCount((c) => c + 1), []);
 
   const createLocal = async (data: Omit<LocalInsert, 'owner_id'>): Promise<LocalRow | null> => {
     const supabase = createClient();
@@ -135,5 +164,87 @@ export function useLocal(): UseLocalReturn {
     setMusicProfile((prev: MusicProfileRow | null) => prev ? { ...prev, ...data } : prev);
   };
 
-  return { local, musicProfile, loading, error, createLocal, updateLocal, updateMusicProfile, refetch: fetchLocal };
+  const updateWeeklySchedule = async (
+    newDayStatuses: WeeklyDayStatus[],
+    newSlotOverrides: WeeklySlotOverride[]
+  ) => {
+    if (!local) return;
+    const supabase = createClient();
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    const client = supabase as any;
+
+    // Upsert day statuses
+    if (newDayStatuses.length > 0) {
+      const rows = newDayStatuses.map((d) => ({
+        local_id: local.id,
+        day_of_week: d.day_of_week,
+        is_closed: d.is_closed,
+      }));
+
+      const { error: dayErr } = await client
+        .from('weekly_day_status')
+        .upsert(rows, { onConflict: 'local_id,day_of_week' });
+
+      if (dayErr) throw dayErr;
+    }
+
+    // Delete day statuses that are no longer present (days set back to default open)
+    const activeDays = new Set(newDayStatuses.map((d) => d.day_of_week));
+    const daysToDelete = dayStatuses
+      .filter((d) => !activeDays.has(d.day_of_week))
+      .map((d) => d.day_of_week);
+
+    if (daysToDelete.length > 0) {
+      await client
+        .from('weekly_day_status')
+        .delete()
+        .eq('local_id', local.id)
+        .in('day_of_week', daysToDelete);
+    }
+
+    // Upsert slot overrides
+    if (newSlotOverrides.length > 0) {
+      const rows = newSlotOverrides.map((o) => ({
+        local_id: local.id,
+        day_of_week: o.day_of_week,
+        time_slot: o.time_slot,
+        is_closed: o.is_closed,
+        genres: o.genres,
+        energy_level: o.energy_level,
+      }));
+
+      const { error: slotErr } = await client
+        .from('weekly_slot_overrides')
+        .upsert(rows, { onConflict: 'local_id,day_of_week,time_slot' });
+
+      if (slotErr) throw slotErr;
+    }
+
+    // Delete slot overrides that are no longer present
+    const activeSlotKeys = new Set(
+      newSlotOverrides.map((o) => `${o.day_of_week}-${o.time_slot}`)
+    );
+    const slotsToDelete = slotOverrides.filter(
+      (o) => !activeSlotKeys.has(`${o.day_of_week}-${o.time_slot}`)
+    );
+
+    for (const slot of slotsToDelete) {
+      await client
+        .from('weekly_slot_overrides')
+        .delete()
+        .eq('local_id', local.id)
+        .eq('day_of_week', slot.day_of_week)
+        .eq('time_slot', slot.time_slot);
+    }
+
+    // Update local state
+    setDayStatuses(newDayStatuses);
+    setSlotOverrides(newSlotOverrides);
+  };
+
+  return {
+    local, musicProfile, dayStatuses, slotOverrides,
+    loading, error, createLocal, updateLocal, updateMusicProfile,
+    updateWeeklySchedule, refetch,
+  };
 }

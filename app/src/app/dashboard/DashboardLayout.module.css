@@ -1,0 +1,190 @@
+/* ============================================================
+   DASHBOARD LAYOUT — Full-screen 3-column layout
+   Global structure for /dashboard and /dashboard/config
+   ============================================================ */
+
+.shell {
+  display: flex;
+  flex-direction: column;
+  height: 100dvh;
+  overflow: hidden;
+  background: var(--color-bg-primary);
+}
+
+.contentWrapper {
+  flex: 1;
+  display: flex;
+  overflow: hidden;
+  min-height: 0;
+}
+
+/* ── Left Sidebar ───────────────────────────────────────────── */
+.sidebar {
+  width: 72px;
+  flex-shrink: 0;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding: var(--space-5) 0;
+  gap: var(--space-6);
+  background: var(--color-bg-secondary);
+  border-right: 1px solid var(--color-border);
+  z-index: 10;
+}
+
+.sidebarLogo {
+  color: var(--color-accent-gold);
+  flex-shrink: 0;
+}
+
+.sidebarSpacer {
+  flex: 1;
+}
+
+.sidebarStatus {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: var(--space-1);
+}
+
+.sidebarDot {
+  width: 8px;
+  height: 8px;
+  border-radius: var(--radius-full);
+}
+
+.sidebarDot.live         { background: var(--color-success); animation: livePulse 2s ease-in-out infinite; }
+.sidebarDot.paused       { background: var(--color-warning); }
+.sidebarDot.disconnected { background: var(--color-error); animation: blink 1.2s step-end infinite; }
+.sidebarDot.inactive     { background: var(--color-text-tertiary); }
+
+.sidebarStatusLabel {
+  font-size: 10px;
+  font-weight: var(--weight-semibold);
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  color: var(--color-text-tertiary);
+  text-align: center;
+}
+
+.sidebarIconBtn {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 44px;
+  height: 44px;
+  border-radius: var(--radius-md);
+  color: var(--color-text-secondary);
+  transition: background var(--duration-fast), color var(--duration-fast);
+}
+
+.sidebarIconBtn:hover {
+  background: var(--color-surface-2);
+  color: var(--color-accent-gold);
+}
+
+.sidebarIconBtnActive {
+  background: var(--color-surface-2);
+  color: var(--color-accent-gold);
+}
+
+@keyframes blink {
+  0%, 100% { opacity: 1; }
+  50%       { opacity: 0.2; }
+}
+
+/* ── Main Column ────────────────────────────────────────────── */
+.main {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+  min-width: 0;
+}
+
+/* ── Right Panel (Queue) ────────────────────────────────────── */
+.rightPanel {
+  width: 360px;
+  flex-shrink: 0;
+  display: flex;
+  flex-direction: column;
+  overflow-y: auto;
+  border-left: 1px solid var(--color-border);
+  background: var(--color-bg-secondary);
+  padding: var(--space-6);
+  gap: var(--space-4);
+  transition: transform var(--duration-normal) var(--ease-snappy), width var(--duration-normal) var(--ease-snappy);
+}
+
+.rightPanelHidden {
+  width: 0;
+  padding: 0;
+  border-left: none;
+  overflow: hidden;
+  pointer-events: none;
+}
+
+.rightPanelFooter {
+  margin-top: auto;
+  border-top: 1px solid var(--color-border);
+  padding-top: var(--space-3);
+}
+
+@media (max-width: 900px) {
+  .contentWrapper {
+    flex-direction: column;
+    position: relative;
+  }
+
+  /* Sidebar becomes a top-bar mobile ─────────────────────── */
+  .sidebar {
+    width: 100%;
+    height: 60px;
+    flex-direction: row;
+    padding: 0 var(--space-5);
+    border-right: none;
+    border-bottom: 1px solid var(--color-border);
+    gap: var(--space-4);
+  }
+
+  .sidebarSpacer { display: none; }
+  .sidebarStatusLabel { display: none; }
+  .sidebarStatus { flex-direction: row; align-items: center; margin-right: auto; }
+  .sidebarLogo { width: 32px; height: 32px; }
+
+  /* Main scrolls independently ────────────────────────────── */
+  .main {
+    flex: 1;
+    overflow-y: auto;
+  }
+
+  /* Right Panel becomes an Overlay Drawer on mobile ───────── */
+  .rightPanel {
+    position: fixed;
+    top: 60px; /* height of mobile sidebar */
+    bottom: 72px; /* height of MiniPlayer mobile */
+    left: 0;
+    right: 0;
+    width: 100%;
+    z-index: 100;
+    border-left: none;
+    border-top: 1px solid var(--color-border);
+    transform: translateY(0);
+    opacity: 1;
+    background: rgba(16, 16, 28, 0.98);
+    backdrop-filter: blur(20px);
+    -webkit-backdrop-filter: blur(20px);
+    transition: transform var(--duration-normal) var(--ease-snappy), opacity var(--duration-normal);
+  }
+
+  .rightPanelHidden {
+    transform: translateY(100%);
+    opacity: 0;
+    pointer-events: none;
+  }
+
+  .rightPanelFooter {
+    padding-bottom: var(--space-10);
+  }
+}

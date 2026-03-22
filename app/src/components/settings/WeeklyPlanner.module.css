@@ -1,0 +1,334 @@
+/* ═══════════════════════════════════════════════════ */
+/* ══ Weekly Planner — Timeline Design ══             */
+/* ═══════════════════════════════════════════════════ */
+
+/* ─── Legend ─── */
+.legend {
+  display: flex;
+  gap: 24px;
+  justify-content: center;
+  margin-bottom: 24px;
+  flex-wrap: wrap;
+}
+
+.legendItem {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.legendEmoji {
+  font-size: 1rem;
+}
+
+.legendLabel {
+  font-size: 0.75rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+}
+
+.legendDesc {
+  font-size: 0.7rem;
+  color: var(--text-tertiary);
+}
+
+/* ─── Day Rows Container ─── */
+.dayRows {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+/* ─── Single Day Row ─── */
+.dayRow {
+  border-radius: 12px;
+  border: 1px solid var(--border);
+  background: var(--surface-2);
+  overflow: hidden;
+  transition: all 0.2s;
+}
+
+.dayRow:hover:not(.dayRowClosed) {
+  border-color: rgba(200, 169, 110, 0.15);
+}
+
+.dayRowClosed {
+  opacity: 0.5;
+}
+
+.dayRowExpanded {
+  border-color: rgba(200, 169, 110, 0.25);
+  background: var(--surface-1);
+}
+
+/* ─── Day Header ─── */
+.dayHeader {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 10px 16px;
+}
+
+.dayName {
+  font-size: 0.85rem;
+  font-weight: 600;
+  color: var(--text-primary);
+  background: none;
+  border: none;
+  cursor: pointer;
+  padding: 4px 0;
+  transition: color 0.15s;
+}
+
+.dayName:hover {
+  color: var(--gold);
+}
+
+.dayRowClosed .dayName {
+  cursor: default;
+  color: var(--text-tertiary);
+  text-decoration: line-through;
+}
+
+/* ─── Toggle ─── */
+.toggle {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  cursor: pointer;
+}
+
+.toggleInput {
+  position: absolute;
+  opacity: 0;
+  width: 0;
+  height: 0;
+}
+
+.toggleTrack {
+  position: relative;
+  width: 32px;
+  height: 16px;
+  border-radius: 100px;
+  background: rgba(248, 113, 113, 0.3);
+  transition: background 0.2s;
+}
+
+.toggleInput:checked + .toggleTrack {
+  background: rgba(74, 222, 128, 0.3);
+}
+
+.toggleThumb {
+  position: absolute;
+  top: 2px;
+  left: 2px;
+  width: 12px;
+  height: 12px;
+  border-radius: 50%;
+  background: #F87171;
+  transition: all 0.2s;
+}
+
+.toggleInput:checked + .toggleTrack .toggleThumb {
+  left: 18px;
+  background: #4ADE80;
+}
+
+.toggleText {
+  font-size: 0.65rem;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.03em;
+  color: #4ADE80;
+}
+
+.toggleTextClosed {
+  color: #F87171;
+}
+
+/* ─── Timeline Bar ─── */
+.timeline {
+  display: flex;
+  align-items: stretch;
+  padding: 0 16px 12px;
+  gap: 2px;
+  position: relative;
+}
+
+.segment {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 2px;
+  min-height: 48px;
+  border-radius: 8px;
+  border: 1px solid transparent;
+  cursor: pointer;
+  transition: all 0.2s;
+  position: relative;
+}
+
+.segment:hover:not(:disabled) {
+  filter: brightness(1.3);
+  transform: scaleY(1.06);
+}
+
+.segment:active:not(:disabled) {
+  transform: scaleY(0.96);
+}
+
+.segmentClosed {
+  cursor: default;
+  opacity: 0.3;
+}
+
+.segmentEmoji {
+  font-size: 1.1rem;
+  line-height: 1;
+}
+
+.segmentTime {
+  font-size: 0.55rem;
+  color: var(--text-tertiary);
+  font-weight: 500;
+}
+
+.timeEnd {
+  position: absolute;
+  right: 16px;
+  bottom: 0;
+  font-size: 0.55rem;
+  color: var(--text-tertiary);
+  font-weight: 500;
+  transform: translateY(-2px);
+}
+
+/* ─── Expanded Detail ─── */
+.detail {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  padding: 4px 16px 16px;
+}
+
+.detailSlot {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 10px 14px;
+  border-radius: 10px;
+  border: 1px solid var(--border);
+  background: var(--surface-2);
+  cursor: pointer;
+  transition: all 0.15s;
+  text-align: left;
+}
+
+.detailSlot:hover:not(:disabled) {
+  border-color: rgba(200, 169, 110, 0.3);
+  background: rgba(200, 169, 110, 0.04);
+}
+
+.detailSlotClosed {
+  opacity: 0.35;
+  cursor: default;
+}
+
+.detailTime {
+  font-size: 0.75rem;
+  font-weight: 600;
+  color: var(--text-secondary);
+  min-width: 100px;
+  font-variant-numeric: tabular-nums;
+}
+
+.detailVibe {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  flex: 1;
+  font-size: 0.8rem;
+}
+
+.detailEnergy {
+  font-size: 0.65rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  padding: 4px 10px;
+  border-radius: 100px;
+  white-space: nowrap;
+}
+
+.detailClosed {
+  font-size: 0.75rem;
+  color: var(--text-tertiary);
+  font-style: italic;
+}
+
+/* ─── Closed Day Bar ─── */
+.closedBar {
+  padding: 0 16px 12px;
+}
+
+.closedBar span {
+  display: block;
+  text-align: center;
+  padding: 12px;
+  border-radius: 8px;
+  background: rgba(255, 255, 255, 0.02);
+  font-size: 0.75rem;
+  color: var(--text-tertiary);
+  font-style: italic;
+}
+
+/* ─── Responsive ─── */
+@media (max-width: 768px) {
+  .legend {
+    gap: 12px;
+  }
+
+  .legendDesc {
+    display: none;
+  }
+
+  .dayHeader {
+    padding: 8px 12px;
+  }
+
+  .dayName {
+    font-size: 0.75rem;
+  }
+
+  .timeline {
+    padding: 0 12px 10px;
+  }
+
+  .segment {
+    min-height: 40px;
+  }
+
+  .segmentEmoji {
+    font-size: 0.9rem;
+  }
+
+  .detail {
+    padding: 4px 12px 12px;
+  }
+
+  .detailSlot {
+    padding: 8px 10px;
+    gap: 8px;
+  }
+
+  .detailTime {
+    font-size: 0.65rem;
+    min-width: 80px;
+  }
+
+  .detailVibe {
+    font-size: 0.7rem;
+  }
+}

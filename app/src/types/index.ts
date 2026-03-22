@@ -164,6 +164,57 @@ export interface SessionEvent {
   created_at?: string;
 }
 
+// --- WEEKLY PLANNER ---
+
+export interface WeeklyDayStatus {
+  id?: string;
+  local_id: string;
+  day_of_week: number;           // 0=Sunday, 1=Monday, ..., 6=Saturday
+  is_closed: boolean;
+}
+
+export interface WeeklySlotOverride {
+  id?: string;
+  local_id: string;
+  day_of_week: number;           // 0=Sunday, 1=Monday, ..., 6=Saturday
+  time_slot: TimeSlot;
+  is_closed: boolean;
+  genres: Genre[] | null;        // null = use default profile
+  energy_level: EnergyLevel | null; // null = use default profile
+  created_at?: string;
+  updated_at?: string;
+}
+
+/** UI helper: full schedule for a single day */
+export interface DaySchedule {
+  day_of_week: number;
+  is_closed: boolean;            // entire day closed
+  slots: Record<TimeSlot, SlotConfig>;
+}
+
+export interface SlotConfig {
+  mode: 'default' | 'custom' | 'closed';
+  genres: Genre[] | null;
+  energy_level: EnergyLevel | null;
+}
+
+export const DAY_LABELS: Record<number, string> = {
+  0: 'Dom', 1: 'Lun', 2: 'Mar', 3: 'Mié', 4: 'Jue', 5: 'Vie', 6: 'Sáb',
+};
+
+export const DAY_LABELS_FULL: Record<number, string> = {
+  0: 'Domingo', 1: 'Lunes', 2: 'Martes', 3: 'Miércoles',
+  4: 'Jueves', 5: 'Viernes', 6: 'Sábado',
+};
+
+export const TIME_SLOT_LABELS: Record<TimeSlot, string> = {
+  opening: 'Mañana',
+  afternoon: 'Tarde',
+  early_night: 'Noche',
+  peak_night: 'Peak',
+  closing: 'Cierre',
+};
+
 // --- DASHBOARD STATE ---
 
 export interface TrackInfo {

@@ -67,25 +67,44 @@ export async function POST(request: Request) {
   }
 
   const authMs = Date.now() - authStart;
-  const genres = (seedGenres as string[]).slice(0, 3);
+  const allSeeds = (seedGenres as string[]).slice(0, 5);
   const reqStart = Date.now();
+
+  // Separate genre seeds from artist seeds
+  const genreSeeds = allSeeds.filter(s => !s.startsWith('artist:'));
+  const artistSeeds = allSeeds.filter(s => s.startsWith('artist:'));
 
   // Mood keywords del preset (ej: "lounge smooth chill" para bar en opening)
   const moodSuffix = Array.isArray(moodKeywords) && moodKeywords.length > 0
     ? ' ' + moodKeywords.join(' ')
     : '';
 
-  // Estrategia 1: busqueda por genero + mood keywords
-  const genreQuery = genres.map(g => `genre:${g}`).join(' OR ');
-  const fullQuery = genreQuery + moodSuffix;
+  // Build search query combining genres and artists
+  const parts: string[] = [];
+  if (genreSeeds.length > 0) {
+    parts.push(genreSeeds.map(g => `genre:${g}`).join(' OR '));
+  }
+  if (artistSeeds.length > 0) {
+    // artistSeeds already have 'artist:' prefix
+    parts.push(artistSeeds.join(' OR '));
+  }
+
+  const fullQuery = (parts.length > 0 ? parts.join(' ') : 'music') + moodSuffix;
   console.log(`[Recs] Buscando: "${fullQuery}" (desired: ${desired})`);
   let tracks = await searchTracks(token, fullQuery, desired);
 
-  // Estrategia 2: busqueda por keywords de genero + mood si genero no devuelve resultados
-  if (tracks.length === 0) {
-    const keywords = genres.map(g => KEYWORD_MAP[g] || g).join(' ') + moodSuffix;
+  // Fallback: keywords de género + mood si no devuelve resultados
+  if (tracks.length === 0 && genreSeeds.length > 0) {
+    const keywords = genreSeeds.map(g => KEYWORD_MAP[g] || g).join(' ') + moodSuffix;
     console.log(`[Recs] Fallback keywords: "${keywords}"`);
     tracks = await searchTracks(token, keywords, desired);
+  }
+
+  // Fallback: buscar solo por nombres de artista sin prefix
+  if (tracks.length === 0 && artistSeeds.length > 0) {
+    const artistNames = artistSeeds.map(s => s.replace('artist:', '')).join(' ');
+    console.log(`[Recs] Fallback artist names: "${artistNames}"`);
+    tracks = await searchTracks(token, artistNames, desired);
   }
 
   // Deduplicar por spotify_track_id
@@ -96,7 +115,7 @@ export async function POST(request: Request) {
     return true;
   });
 
-  console.log(`[Recs] ${tracks.length} tracks únicos (auth: ${authMs}ms, search: ${Date.now() - reqStart}ms, total: ${Date.now() - authStart}ms) para: ${genres.join(', ')}`);
+  console.log(`[Recs] ${tracks.length} tracks únicos (auth: ${authMs}ms, search: ${Date.now() - reqStart}ms, total: ${Date.now() - authStart}ms) para: ${allSeeds.join(', ')}`);
   return NextResponse.json({ tracks });
 }
 
