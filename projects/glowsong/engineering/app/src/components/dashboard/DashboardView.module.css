@@ -1,0 +1,374 @@
+/* ============================================================
+   DASHBOARD — Full-screen 3-column layout
+   Similar to Spotify: sidebar | hero-center | right-panel
+   ============================================================ */
+
+/* ── Root Shell ─────────────────────────────────────────────── */
+.shell {
+  display: flex;
+  height: 100%;
+  overflow: hidden;
+  background: var(--color-bg-primary);
+}
+
+/* ── Left Sidebar ───────────────────────────────────────────── */
+.sidebar {
+  width: 72px;
+  flex-shrink: 0;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding: var(--space-5) 0;
+  gap: var(--space-6);
+  background: var(--color-bg-secondary);
+  border-right: 1px solid var(--color-border);
+  z-index: 10;
+}
+
+.sidebarLogo {
+  color: var(--color-accent-gold);
+  flex-shrink: 0;
+}
+
+.sidebarSpacer {
+  flex: 1;
+}
+
+.sidebarStatus {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: var(--space-1);
+}
+
+.sidebarDot {
+  width: 8px;
+  height: 8px;
+  border-radius: var(--radius-full);
+}
+
+.sidebarDot.live         { background: var(--color-success); animation: livePulse 2s ease-in-out infinite; }
+.sidebarDot.paused       { background: var(--color-warning); }
+.sidebarDot.disconnected { background: var(--color-error); animation: blink 1.2s step-end infinite; }
+.sidebarDot.inactive     { background: var(--color-text-tertiary); }
+
+.sidebarStatusLabel {
+  font-size: 10px;
+  font-weight: var(--weight-semibold);
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  color: var(--color-text-tertiary);
+  text-align: center;
+}
+
+.sidebarIconBtn {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 44px;
+  height: 44px;
+  border-radius: var(--radius-md);
+  color: var(--color-text-secondary);
+  transition: background var(--duration-fast), color var(--duration-fast);
+}
+
+.sidebarIconBtn:hover {
+  background: var(--color-surface-2);
+  color: var(--color-accent-gold);
+}
+
+@keyframes blink {
+  0%, 100% { opacity: 1; }
+  50%       { opacity: 0.2; }
+}
+
+/* ── Main Column ────────────────────────────────────────────── */
+.main {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+  min-width: 0;
+}
+
+/* Top bar inside main */
+.topBar {
+  display: flex;
+  align-items: center;
+  gap: var(--space-4);
+  padding: 0 var(--space-8);
+  height: 56px;
+  flex-shrink: 0;
+  border-bottom: 1px solid var(--color-border);
+  background: rgba(8, 8, 16, 0.7);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+}
+
+.topBarLeft {
+  display: flex;
+  flex-direction: column;
+  gap: 3px;
+  min-width: 0;
+}
+
+.topBarGreeting {
+  font-size: var(--text-lg);
+  font-weight: var(--weight-semibold);
+  color: var(--color-text-primary);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.topBarMoodBadge {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 2px 10px 2px 8px;
+  border-radius: var(--radius-full);
+  background: rgba(200, 169, 110, 0.08);
+  border: 1px solid rgba(200, 169, 110, 0.15);
+  font-size: var(--text-xs);
+  color: var(--color-text-secondary);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  width: fit-content;
+}
+
+.moodDot {
+  width: 6px;
+  height: 6px;
+  border-radius: var(--radius-full);
+  background: var(--color-accent-gold);
+  flex-shrink: 0;
+  animation: livePulse 2s ease-in-out infinite;
+}
+
+.topBarSpacer { flex: 1; }
+
+/* ── Hero Section ───────────────────────────────────────────── */
+.heroSection {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: var(--space-6) var(--space-10);
+  overflow-y: auto;
+  gap: var(--space-4);
+}
+
+/* ── Right Panel ────────────────────────────────────────────── */
+.rightPanel {
+  width: 360px;
+  flex-shrink: 0;
+  display: flex;
+  flex-direction: column;
+  overflow-y: auto;
+  border-left: 1px solid var(--color-border);
+  background: var(--color-bg-secondary);
+  padding: var(--space-6);
+  gap: var(--space-4);
+}
+
+.rightPanelFooter {
+  margin-top: auto;
+  border-top: 1px solid var(--color-border);
+  padding-top: var(--space-3);
+}
+
+/* ── Dev panel ────────────────────────────────────────────── */
+.devPanel {
+  display: flex;
+  align-items: center;
+  gap: var(--space-2);
+  padding: var(--space-3) var(--space-4);
+  background: rgba(123, 97, 255, 0.06);
+  border: 1px dashed rgba(123, 97, 255, 0.25);
+  border-radius: var(--radius-md);
+  flex-wrap: wrap;
+  flex-shrink: 0;
+}
+
+.devLabel {
+  font-size: var(--text-xs);
+  color: var(--color-accent-purple);
+  font-weight: var(--weight-semibold);
+}
+
+.devBtn {
+  padding: 3px 10px;
+  border-radius: var(--radius-sm);
+  font-size: var(--text-xs);
+  border: 1px solid rgba(123, 97, 255, 0.4);
+  background: rgba(123, 97, 255, 0.10);
+  color: var(--color-accent-purple);
+  cursor: pointer;
+  transition: background var(--duration-fast);
+}
+
+.devBtn:hover { background: rgba(123, 97, 255, 0.22); }
+
+/* ── Toast ────────────────────────────────────────────────── */
+.toastContainer {
+  position: fixed;
+  top: var(--space-4);
+  left: 50%;
+  transform: translateX(-50%);
+  z-index: 200;
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-2);
+  width: calc(100% - var(--space-8));
+  max-width: 420px;
+  pointer-events: none;
+}
+
+.toast {
+  display: flex;
+  align-items: center;
+  gap: var(--space-3);
+  padding: var(--space-3) var(--space-5);
+  border-radius: var(--radius-md);
+  background: var(--color-surface-2);
+  border: 1px solid var(--color-border);
+  box-shadow: var(--shadow-lg);
+  font-size: var(--text-sm);
+  font-weight: var(--weight-medium);
+  color: var(--color-text-primary);
+  animation: toastIn var(--duration-fast) var(--ease-out);
+  pointer-events: auto;
+}
+
+.toast.success { border-left: 3px solid var(--color-success); }
+.toast.error   { border-left: 3px solid var(--color-error); }
+.toast.info    { border-left: 3px solid var(--color-info); }
+
+/* ── No device (full area) ────────────────────────────────── */
+.noDeviceArea {
+  flex: 1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: var(--space-8);
+}
+
+/* ── Skeleton classes for loading state ───────────────────── */
+.skeletonGreeting {
+  width: 180px;
+  height: 16px;
+}
+
+.skeletonMood {
+  width: 260px;
+  height: 12px;
+}
+
+/* ── Preparing Music state ───────────────────────────────── */
+.preparingMusic {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: var(--space-4);
+  flex: 1;
+  position: relative;
+}
+
+.preparingGlow {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -55%);
+  width: 300px;
+  height: 300px;
+  background: radial-gradient(
+    circle,
+    rgba(200, 169, 110, 0.10) 0%,
+    rgba(200, 169, 110, 0.03) 45%,
+    transparent 70%
+  );
+  pointer-events: none;
+  animation: preparingPulse 3s ease-in-out infinite;
+}
+
+@keyframes preparingPulse {
+  0%, 100% { opacity: 0.5; transform: translate(-50%, -55%) scale(1); }
+  50%      { opacity: 1;   transform: translate(-50%, -55%) scale(1.06); }
+}
+
+.preparingIcon {
+  color: var(--color-accent-gold);
+  animation: preparingIconPulse 2s ease-in-out infinite;
+  z-index: 1;
+}
+
+@keyframes preparingIconPulse {
+  0%, 100% { opacity: 0.5; transform: scale(1); }
+  50%      { opacity: 1;   transform: scale(1.08); }
+}
+
+.preparingText {
+  font-family: var(--font-display);
+  font-size: var(--text-xl);
+  font-weight: var(--weight-bold);
+  color: var(--color-text-primary);
+  z-index: 1;
+}
+
+.preparingSubtext {
+  font-size: var(--text-sm);
+  color: var(--color-text-tertiary);
+  z-index: 1;
+}
+
+/* ── Responsive: tablet / mobile ─────────────────────────── */
+@media (max-width: 900px) {
+  .shell {
+    flex-direction: column;
+    height: auto;
+    min-height: 100dvh;
+    overflow: auto;
+  }
+
+  .sidebar {
+    width: 100%;
+    height: 56px;
+    flex-direction: row;
+    padding: 0 var(--space-4);
+    border-right: none;
+    border-bottom: 1px solid var(--color-border);
+  }
+
+  .sidebarLogo { width: 28px; height: 28px; }
+  .sidebarStatus { flex-direction: row; }
+  .sidebarStatusLabel { display: none; }
+  .sidebarSpacer { display: none; }
+
+  .main { overflow: visible; }
+
+  .topBar {
+    height: 48px;
+    padding: 0 var(--space-5);
+  }
+
+  .topBarGreeting {
+    font-size: var(--text-base);
+  }
+
+  .topBarMoodBadge {
+    display: none; /* simple is better on mobile */
+  }
+
+  .heroSection {
+    padding: var(--space-4) var(--space-5);
+  }
+
+  .rightPanel {
+    width: 100%;
+    border-left: none;
+    border-top: 1px solid var(--color-border);
+  }
+}

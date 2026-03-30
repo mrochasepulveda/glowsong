@@ -1,0 +1,10 @@
+{
+  "name": "@foqo/ui",
+  "version": "0.1.0",
+  "description": "Foqo Design System — shared tokens, components, and themes",
+  "main": "index.css",
+  "files": [
+    "*.css"
+  ],
+  "keywords": ["foqo", "design-system", "css"]
+}

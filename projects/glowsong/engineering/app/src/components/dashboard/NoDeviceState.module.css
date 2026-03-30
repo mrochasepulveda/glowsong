@@ -1,0 +1,235 @@
+/* ============================================================
+   NoDeviceState — Empty/CTA states for the dashboard
+   ============================================================ */
+
+.wrapper {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+  padding: var(--space-8) var(--space-6);
+  gap: var(--space-5);
+  flex: 1;
+  position: relative;
+}
+
+/* ── Ambient glow behind the hero play button ── */
+.ambientGlow {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -60%);
+  width: 340px;
+  height: 340px;
+  background: radial-gradient(
+    circle,
+    rgba(200, 169, 110, 0.12) 0%,
+    rgba(200, 169, 110, 0.04) 40%,
+    transparent 70%
+  );
+  pointer-events: none;
+  animation: ambientPulse 4s ease-in-out infinite;
+}
+
+@keyframes ambientPulse {
+  0%, 100% { opacity: 0.6; transform: translate(-50%, -60%) scale(1); }
+  50%      { opacity: 1;   transform: translate(-50%, -60%) scale(1.08); }
+}
+
+/* ── Hero play button ── */
+.heroPlayBtn {
+  position: relative;
+  width: 120px;
+  height: 120px;
+  border-radius: var(--radius-full);
+  background: linear-gradient(145deg, rgba(200, 169, 110, 0.15), rgba(200, 169, 110, 0.06));
+  border: 2px solid rgba(200, 169, 110, 0.3);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  transition:
+    transform var(--duration-fast) var(--ease-spring),
+    border-color var(--duration-fast),
+    box-shadow var(--duration-fast);
+  animation: heroGlow 3s ease-in-out infinite;
+  z-index: 1;
+}
+
+.heroPlayBtn:hover {
+  transform: scale(1.06);
+  border-color: var(--color-accent-gold);
+  box-shadow:
+    0 0 30px rgba(200, 169, 110, 0.3),
+    0 0 60px rgba(200, 169, 110, 0.1);
+}
+
+.heroPlayBtn:active {
+  transform: scale(0.96);
+}
+
+.heroPlayBtn svg {
+  color: var(--color-accent-gold);
+  margin-left: 4px; /* optical centering for play triangle */
+}
+
+@keyframes heroGlow {
+  0%, 100% { box-shadow: 0 0 20px rgba(200, 169, 110, 0.1), 0 0 40px rgba(200, 169, 110, 0.05); }
+  50%      { box-shadow: 0 0 30px rgba(200, 169, 110, 0.2), 0 0 60px rgba(200, 169, 110, 0.08); }
+}
+
+/* ── Ring pulse behind hero button ── */
+.heroPlayBtn::before {
+  content: '';
+  position: absolute;
+  inset: -8px;
+  border-radius: var(--radius-full);
+  border: 1px solid rgba(200, 169, 110, 0.15);
+  animation: ringPulse 3s ease-in-out infinite;
+}
+
+@keyframes ringPulse {
+  0%, 100% { transform: scale(1);    opacity: 0.4; }
+  50%      { transform: scale(1.12); opacity: 0; }
+}
+
+/* ── Text content ── */
+.textGroup {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: var(--space-2);
+  z-index: 1;
+}
+
+.title {
+  font-family: var(--font-display);
+  font-size: var(--text-2xl);
+  font-weight: var(--weight-bold);
+  color: var(--color-text-primary);
+  line-height: var(--leading-tight);
+}
+
+.subtitle {
+  font-size: var(--text-base);
+  color: var(--color-text-secondary);
+  line-height: var(--leading-relaxed);
+  max-width: 320px;
+}
+
+.subtitle strong {
+  color: var(--color-accent-gold);
+  font-weight: var(--weight-semibold);
+}
+
+/* ── Speaker hint (secondary info) ── */
+.speakerHint {
+  display: flex;
+  align-items: center;
+  gap: var(--space-2);
+  font-size: var(--text-xs);
+  color: var(--color-text-tertiary);
+  z-index: 1;
+  max-width: 300px;
+}
+
+.speakerHint strong {
+  color: var(--color-text-secondary);
+  font-weight: var(--weight-medium);
+}
+
+/* ── Error/info states (auth, premium, connecting) ── */
+.iconWrapper {
+  width: 80px;
+  height: 80px;
+  border-radius: var(--radius-full);
+  background: var(--color-surface-2);
+  border: 1px solid var(--color-border);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: var(--color-text-tertiary);
+  z-index: 1;
+}
+
+.description {
+  font-size: var(--text-sm);
+  color: var(--color-text-tertiary);
+  line-height: var(--leading-relaxed);
+  max-width: 280px;
+}
+
+.actions {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-3);
+  width: 100%;
+  max-width: 240px;
+  margin-top: var(--space-2);
+  z-index: 1;
+}
+
+.primaryBtn {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 14px 24px;
+  border-radius: var(--radius-full);
+  font-size: var(--text-base);
+  font-weight: var(--weight-semibold);
+  background: var(--color-accent-gold);
+  color: var(--color-text-on-accent);
+  box-shadow: var(--glow-btn-primary);
+  transition:
+    background var(--duration-fast),
+    transform var(--duration-instant) var(--ease-spring);
+}
+
+.primaryBtn:hover {
+  background: var(--color-accent-gold-light);
+  transform: translateY(-1px);
+}
+
+.primaryBtn:active {
+  transform: scale(0.97);
+}
+
+.secondaryBtn {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 14px 24px;
+  border-radius: var(--radius-full);
+  font-size: var(--text-base);
+  font-weight: var(--weight-medium);
+  border: 1px solid var(--color-border);
+  background: var(--color-surface-2);
+  color: var(--color-text-secondary);
+  transition: background var(--duration-fast), color var(--duration-fast);
+}
+
+.secondaryBtn:hover {
+  background: var(--color-surface-3);
+  color: var(--color-text-primary);
+}
+
+/* ── Connecting spinner ── */
+.connectingIcon {
+  width: 80px;
+  height: 80px;
+  border-radius: var(--radius-full);
+  background: linear-gradient(145deg, rgba(200, 169, 110, 0.10), rgba(200, 169, 110, 0.04));
+  border: 2px solid rgba(200, 169, 110, 0.2);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: var(--color-accent-gold);
+  animation: connectPulse 2s ease-in-out infinite;
+  z-index: 1;
+}
+
+@keyframes connectPulse {
+  0%, 100% { opacity: 0.6; transform: scale(1); }
+  50%      { opacity: 1;   transform: scale(1.04); }
+}

@@ -1,0 +1,56 @@
+/* ============================================================
+   RIFF THEME — Brand Layer
+   Personalidad: Energético, eléctrico, underground, nocturno
+   Color primario: Orange — urgencia, calor nocturno
+   ============================================================ */
+
+@import url('https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@500;600;700&display=swap');
+
+:root {
+  /* ── DISPLAY FONT ────────────────────────────────────────── */
+  --font-display: 'Space Grotesk', 'Inter', -apple-system, sans-serif;
+
+  /* ── BRAND ACCENT (orange) ─────────────────────────────── */
+  --color-accent:            #F97316;
+  --color-accent-light:      #FB923C;
+  --color-accent-dim:        #C2410C;
+  --color-accent-secondary:  #FBBF24;
+
+  /* ── SURFACE TINT (warm-neutral) ───────────────────────── */
+  --color-bg-primary:        #06060E;
+  --color-bg-secondary:      #0C0C14;
+  --color-surface-1:         #121218;
+  --color-surface-2:         #1A1A22;
+  --color-surface-3:         #24242E;
+
+  /* ── BORDERS (warm tint) ───────────────────────────────── */
+  --color-border:            rgba(249, 115, 22, 0.10);
+  --color-border-hover:      rgba(249, 115, 22, 0.22);
+  --color-border-active:     rgba(249, 115, 22, 0.40);
+
+  /* ── GLOWS ───────────────────────────────────────────────── */
+  --glow-accent:     0 0 20px rgba(249, 115, 22, 0.25), 0 0 60px rgba(249, 115, 22, 0.10);
+  --glow-accent-btn: 0 4px 20px rgba(249, 115, 22, 0.40);
+
+  /* ── RIFF-SPECIFIC TOKENS ────────────────────────────────── */
+  --riff-gradient:       linear-gradient(135deg, #F97316 0%, #FBBF24 100%);
+  --riff-gradient-text:  linear-gradient(135deg, #FB923C 0%, #FDE68A 100%);
+  --riff-gradient-subtle: linear-gradient(135deg, rgba(249, 115, 22, 0.15) 0%, rgba(251, 191, 36, 0.08) 100%);
+  --riff-surface-card:   linear-gradient(180deg, var(--color-surface-1) 0%, var(--color-surface-2) 100%);
+}
+
+/* ── Link color override ──────────────────────────────────── */
+a {
+  color: var(--color-accent-light);
+}
+a:hover {
+  color: var(--color-accent);
+}
+
+/* ── Gradient text utility ────────────────────────────────── */
+.text-gradient {
+  background: var(--riff-gradient-text);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+}

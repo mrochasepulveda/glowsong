@@ -1,0 +1,44 @@
+/* ============================================================
+   GLOWSONG THEME — Brand Layer (Reference)
+   Personalidad: Premium, cálido, sofisticado, elegante
+   Color primario: Gold
+
+   Este archivo es referencia para cuando Glowsong migre
+   al Foqo Design System compartido.
+   ============================================================ */
+
+/*
+@import url('https://api.fontshare.com/v2/css?f[]=clash-display@600,700&display=swap');
+
+:root {
+  --font-display: 'Clash Display', 'DM Serif Display', Georgia, serif;
+
+  --color-accent:            #C8A96E;
+  --color-accent-light:      #E2C89A;
+  --color-accent-dim:        #7A6540;
+  --color-accent-secondary:  #7B61FF;
+
+  --color-bg-primary:        #080810;
+  --color-bg-secondary:      #10101C;
+  --color-surface-1:         #16162A;
+  --color-surface-2:         #1E1E35;
+  --color-surface-3:         #252540;
+
+  --color-border:            #2A2A45;
+  --color-border-hover:      #3A3A60;
+  --color-border-active:     #4A4A7A;
+
+  --glow-accent:     0 0 20px rgba(200, 169, 110, 0.25), 0 0 60px rgba(200, 169, 110, 0.10);
+  --glow-accent-btn: 0 4px 20px rgba(200, 169, 110, 0.40);
+}
+
+a { color: var(--color-accent); }
+a:hover { color: var(--color-accent-light); }
+
+.text-gradient {
+  background: linear-gradient(135deg, #C8A96E 0%, #E2C89A 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+}
+*/

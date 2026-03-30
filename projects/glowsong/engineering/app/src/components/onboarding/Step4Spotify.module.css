@@ -1,0 +1,111 @@
+.spotifyBtn {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: var(--space-3);
+  width: 100%;
+  height: 52px;
+  border-radius: var(--radius-full);
+  font-family: var(--font-body);
+  font-size: var(--text-base);
+  font-weight: var(--weight-semibold);
+  background: #1DB954;
+  color: #fff;
+  transition: opacity var(--duration-fast), transform var(--duration-instant) var(--ease-spring);
+}
+
+.spotifyBtn:hover:not(:disabled) {
+  opacity: 0.92;
+}
+
+.spotifyBtn:active:not(:disabled) {
+  transform: scale(0.97);
+}
+
+.spotifyBtn:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+.permissionsCard {
+  background: var(--color-surface-1);
+  border: 1px solid var(--color-border);
+  border-left: 3px solid var(--color-accent-purple);
+  border-radius: var(--radius-md);
+  padding: var(--space-5);
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-4);
+}
+
+.permissionSection {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-2);
+}
+
+.permissionTitle {
+  font-size: var(--text-sm);
+  font-weight: var(--weight-semibold);
+  color: var(--color-text-primary);
+  margin-bottom: var(--space-1);
+}
+
+.permissionItem {
+  display: flex;
+  align-items: center;
+  gap: var(--space-3);
+  font-size: var(--text-sm);
+  color: var(--color-text-secondary);
+  line-height: var(--leading-normal);
+}
+
+.permIcon {
+  font-size: var(--text-sm);
+  font-weight: var(--weight-bold);
+  flex-shrink: 0;
+  width: 18px;
+  text-align: center;
+}
+
+.permAllowed { color: var(--color-success); }
+.permDenied  { color: var(--color-error); }
+
+.permissionDivider {
+  height: 1px;
+  background: var(--color-border);
+}
+
+.premiumNote {
+  text-align: center;
+  font-size: var(--text-xs);
+  color: var(--color-text-tertiary);
+  line-height: var(--leading-relaxed);
+}
+
+.premiumNote a {
+  color: var(--color-accent-gold);
+}
+
+/* Connected state */
+.connectedBadge {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: var(--space-3);
+  padding: var(--space-4);
+  border-radius: var(--radius-lg);
+  background: rgba(29, 185, 84, 0.10);
+  border: 1px solid rgba(29, 185, 84, 0.30);
+  color: #1DB954;
+  font-size: var(--text-base);
+  font-weight: var(--weight-semibold);
+}
+
+.connectedDot {
+  width: 8px;
+  height: 8px;
+  border-radius: var(--radius-full);
+  background: #1DB954;
+  animation: livePulse 2s ease-in-out infinite;
+}

@@ -1,0 +1,14 @@
+/* ============================================================
+   FOQO DESIGN SYSTEM — Entry Point
+
+   Import order:
+   1. Core tokens + reset (foqo.css)
+   2. Theme brand layer (theme-*.css)
+   3. Shared animations
+   4. Shared components
+   ============================================================ */
+
+@import './foqo.css';
+@import './theme-riff.css';
+@import './animations.css';
+@import './components.css';
